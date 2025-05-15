@@ -47,11 +47,19 @@ public class SudokuTest {
             // Genetic Algorithm Testing
             int geneticCorrectCount = 0;
             long geneticTotalTime = 0;
+            int population_size = 100;
+            double mutation_rate = 0.2;
+            int max_generations = 10;
+
+            // Scale the parameters mathematically each iteration (easy -> very hard)
+            CulturalGenetic CulturalGeneticSolver = new CulturalGenetic(population_size, 
+                                                        mutation_rate, max_generations);
 
             for (int i = 0; i < puzzleCount; i++) {
                 int[][] puzzle = deepCopy(puzzles.get(i));
                 long startTime = System.nanoTime();
-                int[][] solvedPuzzle = SimpleGenetic.solveSudokuGA(puzzle);
+                int[][] solvedPuzzle = CulturalGeneticSolver.solveSudokuGA(puzzle);
+                //CulturalGenetic.printGAConfig(population_size, mutation_rate, max_generations);
                 long endTime = System.nanoTime();
                 long duration = endTime - startTime;
                 geneticTotalTime += duration;
@@ -59,6 +67,10 @@ public class SudokuTest {
                 if (solvedPuzzle != null && isValidBoard(solvedPuzzle)) {
                     geneticCorrectCount++;
                 }
+                population_size = population_size * 100;
+                mutation_rate = mutation_rate * 2;
+                max_generations = max_generations * 2;
+                
             }
 
             double geneticAvgTimeMs = (puzzleCount > 0) ? (geneticTotalTime / 1_000_000.0) / puzzleCount : 0;
@@ -118,7 +130,7 @@ public class SudokuTest {
             int[][] puzzle = deepCopy(unsolvablePuzzles.get(i));
             System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
             long startTime = System.nanoTime();
-            int[][] solvedPuzzle = SimpleGenetic.solveSudokuGA(puzzle);
+            int[][] solvedPuzzle = CulturalGenetic.solveSudokuGA(puzzle);
             long endTime = System.nanoTime();
             double timeMs = (endTime - startTime) / 1_000_000.0;
             System.out.printf("Result: %s, Time: %.4f ms%n",

@@ -2,13 +2,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class SimpleGenetic {
+public class CulturalGenetic {
 
     private static final int GRID_SIZE = 9;
     private static final int SUBGRID_SIZE = 3;
-    private static final int POPULATION_SIZE = 100;
-    private static final double MUTATION_RATE = 0.5;
-    private static final int MAX_GENERATIONS = 10;
+    public static int POPULATION_SIZE = 0;
+    public static double MUTATION_RATE = 0.0;
+    public static int MAX_GENERATIONS = 0;
     private static final Random RANDOM = new Random();
 
     private static class Individual {
@@ -19,6 +19,12 @@ public class SimpleGenetic {
             this.board = generateRandomFilledBoard(initialBoard);
             this.fitness = calculateFitness(this.board);
         }
+    }
+
+    public CulturalGenetic (int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS) {
+        this.POPULATION_SIZE = POPULATION_SIZE;
+        this.MUTATION_RATE = MUTATION_RATE;
+        this.MAX_GENERATIONS = MAX_GENERATIONS;
     }
 
     public static int[][] solveSudokuGA(int[][] initialBoard) {
@@ -179,5 +185,20 @@ public class SimpleGenetic {
             System.arraycopy(source[i], 0, destination[i], 0, GRID_SIZE);
         }
         return destination;
+    }
+
+    public static void printBoard(int[][] board) {
+        for (int[] row : board) {
+            for (int num : row) {
+                System.out.print(num + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static void printGAConfig(int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS) {
+        System.out.println("\nPopulation size: " + POPULATION_SIZE);
+        System.out.println("Mutation rate: " + MUTATION_RATE);
+        System.out.println("Maximum generations: " + MAX_GENERATIONS);
     }
 }
