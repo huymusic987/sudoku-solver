@@ -164,7 +164,7 @@ public class SudokuTest {
         }
     }
 
-    private static List<int[][]> loadSudokuPuzzles(String filename) {
+    public static List<int[][]> loadSudokuPuzzles(String filename) {
         List<int[][]> boards = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
@@ -224,7 +224,7 @@ public class SudokuTest {
         }
     }
 
-    private static int[][] copy(int[][] original) {
+    public static int[][] copy(int[][] original) {
         int[][] copy = new int[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -281,7 +281,7 @@ public class SudokuTest {
         return true;
     }
 
-    private static void printBoard(int[][] board) {
+    public static void printBoard(int[][] board) {
         System.out.println();
         for (int row = 0; row < 9; row++) {
             if ((row % 3 == 0) && (row != 0)) {

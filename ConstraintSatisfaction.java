@@ -1,4 +1,71 @@
 public class ConstraintSatisfaction {
+        public static void main(String[] args) {
+        
+        //Load solvable sudoku
+        String[] difficulties = { "easy", "medium", "hard", "very_hard" };
+        String basePath = "SudokuTest/";
+
+        SudokuTest test = new SudokuTest();
+
+        for (String difficulty : difficulties) {
+            String puzzleFile = basePath + difficulty + "_puzzles.txt";
+            List<int[][]> puzzles = test.loadSudokuPuzzles(puzzleFile);
+
+            if (puzzles == null) {
+                System.out.println("Error loading " + difficulty + " puzzles");
+                continue;
+            }
+            int puzzleCount = puzzles.size();
+            int constraintCorrectCount = 0;
+            long constraintTotalTime = 0;
+
+            for (int i = 0; i < puzzleCount; i++) {
+                int[][] puzzle = test.copy(puzzles.get(i));
+                long startTime = System.nanoTime();
+                boolean solved = constraintSatisfaction(puzzle);
+                long endTime = System.nanoTime();
+                long duration = endTime - startTime;
+                constraintTotalTime += duration;
+
+                if (!solved && isSolved(puzzle)) {
+                test.printBoard(puzzle);
+                constraintCorrectCount++;
+                }
+            }
+
+            double constraintAvgTimeMs = (puzzleCount > 0) ? (constraintTotalTime /
+            1_000_000.0) / puzzleCount : 0;
+            System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved correctly, Average time: %.4f ms%n",
+            difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
+            constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
+        }
+
+        // Load unsolvable puzzles
+        String unsolvableFile = basePath + "unsolvable_puzzles.txt";
+        List<int[][]> unsolvablePuzzles = test.loadSudokuPuzzles(unsolvableFile);
+        if (unsolvablePuzzles == null) {
+            System.out.println("Error loading unsolvable puzzles");
+            return;
+        }
+
+        //Test unsolvable sudoku
+        System.out.println("\nUnsolvable Puzzles (Constraint Satisfaction):");
+        for (int i = 0; i < unsolvablePuzzles.size(); i++) {
+            int[][] puzzle = test.copy(unsolvablePuzzles.get(i));
+            System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
+            long startTime = System.nanoTime();
+            boolean result = constraintSatisfaction(puzzle);
+            long endTime = System.nanoTime();
+            double timeMs = (endTime - startTime) / 1_000_000.0;
+            System.out.printf("Result: %s, Time: %.4f ms%n",
+                    !result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
+            if (!result) {
+                System.out.println("Solved board (should be invalid):");
+                test.printBoard(puzzle);
+            }
+        }
+    }
+    
     private static final int GRID_SIZE = 9;
 
     public static int[][] solve(int[][] board) {
