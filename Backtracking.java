@@ -1,4 +1,16 @@
 public class Backtracking {
+
+    public int[][] solve(int[][] puzzle) {
+        if (!isValidBoard(puzzle)) {
+            return null;
+        }
+        if (BacktrackingRecursive(puzzle)) {
+            return puzzle;
+        } else {
+            return null;
+        }
+    }
+
     private static boolean isNumberInRow(int[][] board, int number, int row) {
         for (int i = 0; i < 9; i++) {
             if (board[row][i] == number) {
@@ -37,21 +49,14 @@ public class Backtracking {
                 !isNumberInBox(board, number, row, column);
     }
 
-    public static boolean BacktrackingAlgorithm(int[][] board) {
-        if (!isValidBoard(board)) {
-            return false;
-        }
-        return BacktrackingAlgorithmRecursive(board);
-    }
-
-    private static boolean BacktrackingAlgorithmRecursive(int[][] board) {
+    private static boolean BacktrackingRecursive(int[][] board) {
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 if (board[row][column] == 0) {
                     for (int numberToTry = 1; numberToTry <= 9; numberToTry++) {
                         if (isValidPlacement(board, numberToTry, row, column)) {
                             board[row][column] = numberToTry;
-                            if (BacktrackingAlgorithmRecursive(board)) {
+                            if (BacktrackingRecursive(board)) {
                                 return true;
                             } else {
                                 board[row][column] = 0;

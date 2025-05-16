@@ -1,13 +1,23 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SudokuTest {
     public static void main(String[] args) {
         String[] difficulties = { "easy", "medium", "hard", "very_hard" };
         String basePath = "SudokuTest/";
+
+        Backtracking backtracking = new Backtracking();
+
+        int geneticCorrectCount = 0;
+        long geneticTotalTime = 0;
+        int population_size = 100;
+        double mutation_rate = 0.2;
+        int max_generations = 10;
+
+        // Scale the parameters mathematically each iteration (easy -> very hard)
+        CulturalGenetic CulturalGeneticSolver = new CulturalGenetic(population_size,
+                mutation_rate, max_generations);
 
         // Test Backtracking, Genetic Algorithm, and Constraint Satisfaction for each
         // difficulty
@@ -27,14 +37,14 @@ public class SudokuTest {
             long backtrackTotalTime = 0;
 
             for (int i = 0; i < puzzleCount; i++) {
-                int[][] puzzle = deepCopy(puzzles.get(i));
+                int[][] puzzle = copy(puzzles.get(i));
                 long startTime = System.nanoTime();
-                boolean solved = Backtracking.BacktrackingAlgorithm(puzzle);
+                int[][] solvedBoard = backtracking.solve(puzzle);
                 long endTime = System.nanoTime();
                 long duration = endTime - startTime;
                 backtrackTotalTime += duration;
 
-                if (solved && isValidBoard(puzzle)) {
+                if (solvedBoard != null && isValidBoard(solvedBoard)) {
                     backtrackCorrectCount++;
                 }
             }
@@ -45,21 +55,13 @@ public class SudokuTest {
                     backtrackCorrectCount, puzzleCount, backtrackAvgTimeMs);
 
             // Genetic Algorithm Testing
-            int geneticCorrectCount = 0;
-            long geneticTotalTime = 0;
-            int population_size = 100;
-            double mutation_rate = 0.2;
-            int max_generations = 10;
-
-            // Scale the parameters mathematically each iteration (easy -> very hard)
-            CulturalGenetic CulturalGeneticSolver = new CulturalGenetic(population_size, 
-                                                        mutation_rate, max_generations);
 
             for (int i = 0; i < puzzleCount; i++) {
-                int[][] puzzle = deepCopy(puzzles.get(i));
+                int[][] puzzle = copy(puzzles.get(i));
                 long startTime = System.nanoTime();
-                int[][] solvedPuzzle = CulturalGeneticSolver.solveSudokuGA(puzzle);
-                //CulturalGenetic.printGAConfig(population_size, mutation_rate, max_generations);
+                int[][] solvedPuzzle = CulturalGeneticSolver.solve(puzzle);
+                // CulturalGenetic.printGAConfig(population_size, mutation_rate,
+                // max_generations);
                 long endTime = System.nanoTime();
                 long duration = endTime - startTime;
                 geneticTotalTime += duration;
@@ -70,7 +72,7 @@ public class SudokuTest {
                 population_size = population_size * 100;
                 mutation_rate = mutation_rate * 2;
                 max_generations = max_generations * 2;
-                
+
             }
 
             double geneticAvgTimeMs = (puzzleCount > 0) ? (geneticTotalTime / 1_000_000.0) / puzzleCount : 0;
@@ -79,26 +81,28 @@ public class SudokuTest {
                     geneticCorrectCount, puzzleCount, geneticAvgTimeMs);
 
             // Constraint Satisfaction Testing
-            int constraintCorrectCount = 0;
-            long constraintTotalTime = 0;
+            // int constraintCorrectCount = 0;
+            // long constraintTotalTime = 0;
 
-            for (int i = 0; i < puzzleCount; i++) {
-                int[][] puzzle = deepCopy(puzzles.get(i));
-                long startTime = System.nanoTime();
-                boolean solved = ConstraintSatisfaction.solveBoard(puzzle);
-                long endTime = System.nanoTime();
-                long duration = endTime - startTime;
-                constraintTotalTime += duration;
+            // for (int i = 0; i < puzzleCount; i++) {
+            // int[][] puzzle = copy(puzzles.get(i));
+            // long startTime = System.nanoTime();
+            // boolean solved = ConstraintSatisfaction.solveBoard(puzzle);
+            // long endTime = System.nanoTime();
+            // long duration = endTime - startTime;
+            // constraintTotalTime += duration;
 
-                if (solved && isValidBoard(puzzle)) {
-                    constraintCorrectCount++;
-                }
-            }
+            // if (solved && isValidBoard(puzzle)) {
+            // constraintCorrectCount++;
+            // }
+            // }
 
-            double constraintAvgTimeMs = (puzzleCount > 0) ? (constraintTotalTime / 1_000_000.0) / puzzleCount : 0;
-            System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved correctly, Average time: %.4f ms%n",
-                    difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
-                    constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
+            // double constraintAvgTimeMs = (puzzleCount > 0) ? (constraintTotalTime /
+            // 1_000_000.0) / puzzleCount : 0;
+            // System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved
+            // correctly, Average time: %.4f ms%n",
+            // difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
+            // constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
         }
 
         // Process unsolvable puzzles
@@ -111,26 +115,28 @@ public class SudokuTest {
 
         System.out.println("\nUnsolvable Puzzles (Backtracking):");
         for (int i = 0; i < unsolvablePuzzles.size(); i++) {
-            int[][] puzzle = deepCopy(unsolvablePuzzles.get(i));
+            int[][] copiedPuzzle = copy(unsolvablePuzzles.get(i));
             System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
             long startTime = System.nanoTime();
-            boolean result = Backtracking.BacktrackingAlgorithm(puzzle);
+            int[][] solvedBoard = backtracking.solve(copiedPuzzle);
             long endTime = System.nanoTime();
             double timeMs = (endTime - startTime) / 1_000_000.0;
             System.out.printf("Result: %s, Time: %.4f ms%n",
-                    result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
-            if (result) {
+                    solvedBoard != null && isValidBoard(solvedBoard) ? "Returned true (unexpected)"
+                            : "Returned false (expected)",
+                    timeMs);
+            if (solvedBoard != null) {
                 System.out.println("Solved board (should be invalid):");
-                printBoard(puzzle);
+                printBoard(copiedPuzzle);
             }
         }
 
         System.out.println("\nUnsolvable Puzzles (Genetic Algorithm):");
         for (int i = 0; i < unsolvablePuzzles.size(); i++) {
-            int[][] puzzle = deepCopy(unsolvablePuzzles.get(i));
+            int[][] puzzle = copy(unsolvablePuzzles.get(i));
             System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
             long startTime = System.nanoTime();
-            int[][] solvedPuzzle = CulturalGenetic.solveSudokuGA(puzzle);
+            int[][] solvedPuzzle = CulturalGeneticSolver.solve(puzzle);
             long endTime = System.nanoTime();
             double timeMs = (endTime - startTime) / 1_000_000.0;
             System.out.printf("Result: %s, Time: %.4f ms%n",
@@ -143,7 +149,7 @@ public class SudokuTest {
 
         System.out.println("\nUnsolvable Puzzles (Constraint Satisfaction):");
         for (int i = 0; i < unsolvablePuzzles.size(); i++) {
-            int[][] puzzle = deepCopy(unsolvablePuzzles.get(i));
+            int[][] puzzle = copy(unsolvablePuzzles.get(i));
             System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
             long startTime = System.nanoTime();
             boolean result = ConstraintSatisfaction.solveBoard(puzzle);
@@ -211,17 +217,19 @@ public class SudokuTest {
                 boards.add(board);
             }
 
-            return boards.isEmpty() ? null : boards;
+            return boards.size() == 0 ? null : boards;
         } catch (IOException e) {
             System.out.println("Error reading file " + filename + ": " + e.getMessage());
             return null;
         }
     }
 
-    private static int[][] deepCopy(int[][] original) {
+    private static int[][] copy(int[][] original) {
         int[][] copy = new int[9][9];
         for (int i = 0; i < 9; i++) {
-            System.arraycopy(original[i], 0, copy[i], 0, 9);
+            for (int j = 0; j < 9; j++) {
+                copy[i][j] = original[i][j];
+            }
         }
         return copy;
     }

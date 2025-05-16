@@ -21,13 +21,13 @@ public class CulturalGenetic {
         }
     }
 
-    public CulturalGenetic (int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS) {
+    public CulturalGenetic(int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS) {
         this.POPULATION_SIZE = POPULATION_SIZE;
         this.MUTATION_RATE = MUTATION_RATE;
         this.MAX_GENERATIONS = MAX_GENERATIONS;
     }
 
-    public static int[][] solveSudokuGA(int[][] initialBoard) {
+    public int[][] solve(int[][] initialBoard) {
         List<Individual> population = initializePopulation(initialBoard);
         for (int generation = 0; generation < MAX_GENERATIONS; generation++) {
             population.sort((a, b) -> Integer.compare(a.fitness, b.fitness));
