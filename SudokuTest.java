@@ -9,6 +9,7 @@ public class SudokuTest {
 
         Backtracking backtracking = new Backtracking();
 
+
         int geneticCorrectCount = 0;
         long geneticTotalTime = 0;
         int population_size = 100;
@@ -80,29 +81,28 @@ public class SudokuTest {
                     difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
                     geneticCorrectCount, puzzleCount, geneticAvgTimeMs);
 
-            // Constraint Satisfaction Testing
-            // int constraintCorrectCount = 0;
-            // long constraintTotalTime = 0;
+            //Constraint Satisfaction Testing
+            int constraintCorrectCount = 0;
+            long constraintTotalTime = 0;
 
-            // for (int i = 0; i < puzzleCount; i++) {
-            // int[][] puzzle = copy(puzzles.get(i));
-            // long startTime = System.nanoTime();
-            // boolean solved = ConstraintSatisfaction.solveBoard(puzzle);
-            // long endTime = System.nanoTime();
-            // long duration = endTime - startTime;
-            // constraintTotalTime += duration;
+            for (int i = 0; i < puzzleCount; i++) {
+                int[][] puzzle = copy(puzzles.get(i));
+                long startTime = System.nanoTime();
+                int[][] solved = ConstraintSatisfaction.solve(puzzle);
+                long endTime = System.nanoTime();
+                long duration = endTime - startTime;
+                constraintTotalTime += duration;
 
-            // if (solved && isValidBoard(puzzle)) {
-            // constraintCorrectCount++;
-            // }
-            // }
+                if (solved != null && isValidBoard(puzzle)) {
+                constraintCorrectCount++;
+                }
+            }
 
-            // double constraintAvgTimeMs = (puzzleCount > 0) ? (constraintTotalTime /
-            // 1_000_000.0) / puzzleCount : 0;
-            // System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved
-            // correctly, Average time: %.4f ms%n",
-            // difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
-            // constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
+            double constraintAvgTimeMs = (puzzleCount > 0) ? (constraintTotalTime /
+            1_000_000.0) / puzzleCount : 0;
+            System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved correctly, Average time: %.4f ms%n",
+            difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
+            constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
         }
 
         // Process unsolvable puzzles
@@ -152,14 +152,14 @@ public class SudokuTest {
             int[][] puzzle = copy(unsolvablePuzzles.get(i));
             System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
             long startTime = System.nanoTime();
-            boolean result = ConstraintSatisfaction.solveBoard(puzzle);
+            int[][] result = ConstraintSatisfaction.solve(puzzle);
             long endTime = System.nanoTime();
             double timeMs = (endTime - startTime) / 1_000_000.0;
             System.out.printf("Result: %s, Time: %.4f ms%n",
-                    result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
-            if (result) {
+                    result != null ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
+            if (result != null) {
                 System.out.println("Solved board (should be invalid):");
-                printBoard(puzzle);
+                printBoard(result);
             }
         }
     }

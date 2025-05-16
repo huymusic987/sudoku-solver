@@ -1,11 +1,20 @@
-import java.util.ArrayList;
-import java.util.List;
-
 public class ConstraintSatisfaction {
     private static final int GRID_SIZE = 9;
 
+    public static int[][] solve(int[][] board) {
+        //check if the solved board not contains duplicated cells
+        if (!isSolved(board)) {
+            return null;
+        }
+        //
+        if (constraintSatisfaction(board)) {
+            return board;
+        }
+        return null;
+    }
+
     // Average complexity: O(n)
-    public static boolean solveBoard(int[][] board) {
+    public static boolean constraintSatisfaction(int[][] board) {
         // Find the most constrained cell (cell with the fewest possible values)
         int[] cell = findMostConstrainedCell(board);
         if (cell == null) {
@@ -17,9 +26,10 @@ public class ConstraintSatisfaction {
         List<Integer> possibleValues = getPossibleValues(board, row, col);
 
         // Try each possible value
-        for (int value : possibleValues) {
+        for (int i = 0; i < possibleValues.size(); i++) {
+            int value = possibleValues.get(i);
             board[row][col] = value;
-            if (solveBoard(board)) {
+            if (constraintSatisfaction(board)) {
                 return true;
             }
             board[row][col] = 0;
@@ -86,5 +96,52 @@ public class ConstraintSatisfaction {
         }
 
         return possibleValues;
+    }
+
+    public static boolean isSolved(int[][] board) {
+        // Check if the board is filled
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                if (board[row][col] == 0) {
+                    return false;
+                }
+            }
+        }
+        
+        // Check row constraint
+        for (int row = 0; row < GRID_SIZE; row++) {
+            boolean[] used = new boolean[GRID_SIZE + 1];
+            for (int col = 0; col < GRID_SIZE; col++) {
+                int num = board[row][col];
+                if (used[num]) return false;
+                used[num] = true;
+            }
+        }
+        
+        // Check column constraint
+        for (int col = 0; col < GRID_SIZE; col++) {
+            boolean[] used = new boolean[GRID_SIZE + 1];
+            for (int row = 0; row < GRID_SIZE; row++) {
+                int num = board[row][col];
+                if (used[num]) return false;
+                used[num] = true;
+            }
+        }
+        
+        // Check 3x3 subgrid constraint
+        for (int boxRow = 0; boxRow < 3; boxRow++) {
+            for (int boxCol = 0; boxCol < 3; boxCol++) {
+                boolean[] used = new boolean[GRID_SIZE + 1];
+                for (int row = boxRow * 3; row < boxRow * 3 + 3; row++) {
+                    for (int col = boxCol * 3; col < boxCol * 3 + 3; col++) {
+                        int num = board[row][col];
+                        if (used[num]) return false;
+                        used[num] = true;
+                    }
+                }
+            }
+        }
+        
+        return true;
     }
 }
