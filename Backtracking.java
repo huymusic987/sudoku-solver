@@ -4,7 +4,10 @@ public class Backtracking {
         if (!isValidBoard(puzzle)) {
             return null;
         }
-        if (BacktrackingRecursive(puzzle)) {
+
+        long startTime = System.currentTimeMillis();
+
+        if (BacktrackingRecursive(puzzle, startTime)) {
             return puzzle;
         } else {
             return null;
@@ -49,14 +52,17 @@ public class Backtracking {
                 !isNumberInBox(board, number, row, column);
     }
 
-    private static boolean BacktrackingRecursive(int[][] board) {
+    private static boolean BacktrackingRecursive(int[][] board, long startTime) {
+        if (System.currentTimeMillis() - startTime > 120000) {
+            throw new RuntimeException("Backtracking exceeded time limit of 2 minutes");
+        }
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 if (board[row][column] == 0) {
                     for (int numberToTry = 1; numberToTry <= 9; numberToTry++) {
                         if (isValidPlacement(board, numberToTry, row, column)) {
                             board[row][column] = numberToTry;
-                            if (BacktrackingRecursive(board)) {
+                            if (BacktrackingRecursive(board, startTime)) {
                                 return true;
                             } else {
                                 board[row][column] = 0;
