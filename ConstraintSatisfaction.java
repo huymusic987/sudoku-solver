@@ -27,7 +27,8 @@ public class ConstraintSatisfaction {
                 long duration = endTime - startTime;
                 constraintTotalTime += duration;
 
-                if (!solved && isSolved(puzzle)) {
+                if (solved && isSolved(puzzle)) {
+                System.out.print("The board was solved correctly!");
                 test.printBoard(puzzle);
                 constraintCorrectCount++;
                 }
@@ -38,6 +39,7 @@ public class ConstraintSatisfaction {
             System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved correctly, Average time: %.4f ms%n",
             difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
             constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
+            System.out.println("--------------------------------------------------------------------------------------");
         }
 
         // Load unsolvable puzzles
