@@ -1,9 +1,15 @@
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
 public class ConstraintSatisfaction {
         public static void main(String[] args) {
         
         //Load solvable sudoku
         String[] difficulties = { "easy", "medium", "hard", "very_hard" };
-        String basePath = "SudokuTest/";
+        String basePath = "sudoku-solver/SudokuTest/";
 
         SudokuTest test = new SudokuTest();
 
@@ -70,14 +76,24 @@ public class ConstraintSatisfaction {
     
     private static final int GRID_SIZE = 9;
 
-    public static int[][] solve(int[][] board) {
-        //check if the solved board not contains duplicated cells
-        if (!isSolved(board)) {
-            return null;
-        }
-        //
-        if (constraintSatisfaction(board)) {
-            return board;
+    public static int[][] solve(int[][] board) throws RuntimeException {
+        SudokuTest test = new SudokuTest();
+        final int[][] copiedBoard = test.copy(board);
+
+        ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
+        Future<Boolean> future = executor.submit(() -> constraintSatisfaction(copiedBoard));
+
+        try {
+            boolean solved = future.get(2, TimeUnit.MINUTES);
+            if (!isSolved(board) && constraintSatisfaction(board)) {
+                return board;
+            }
+        } catch (TimeoutException e) {
+            System.out.println("Solver runtime exceed 2 minutes.");
+        } catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            executor.shutdown();
         }
         return null;
     }
