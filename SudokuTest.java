@@ -69,12 +69,11 @@ public class SudokuTest {
                 
             }
 
-            // Scale the parameters mathematically each iteration (easy -> very hard)
-            population_size = population_size * 10000;
-            mutation_rate = mutation_rate * 5;
-            max_generations = max_generations * 50;
-            
-            //SimpleGeneticSolver.printGAConfig(population_size, mutation_rate, max_generations);
+            // Scale the parameters up for SimpleGeneticSolver by level (Easy -> Very Hard)
+            // Time may be scaled up a lot due to MAX_GENERATIONS and POPULATION_SIZE
+            SimpleGeneticSolver.MAX_GENERATIONS *= 5;
+            SimpleGeneticSolver.MUTATION_RATE *= 5;
+            SimpleGeneticSolver.POPULATION_SIZE *= 2;  
 
             double geneticAvgTimeMs = (puzzleCount > 0) ? (geneticTotalTime / 1_000_000.0) / puzzleCount : 0;
             System.out.printf("%s (Genetic Algorithm): %d/%d puzzles solved correctly, Average time: %.4f ms%n",
@@ -131,6 +130,9 @@ public class SudokuTest {
             }
         }
 
+        SimpleGeneticSolver.MAX_GENERATIONS = 10;
+        SimpleGeneticSolver.MUTATION_RATE = 0.1;
+        SimpleGeneticSolver.POPULATION_SIZE = 5;
         System.out.println("\nUnsolvable Puzzles (Genetic Algorithm):");
         for (int i = 0; i < unsolvablePuzzles.size(); i++) {
             int[][] puzzle = copy(unsolvablePuzzles.get(i));
@@ -146,6 +148,8 @@ public class SudokuTest {
                 printBoard(solvedPuzzle);
             }
         }
+
+        
 
         System.out.println("\nUnsolvable Puzzles (Constraint Satisfaction):");
         for (int i = 0; i < unsolvablePuzzles.size(); i++) {

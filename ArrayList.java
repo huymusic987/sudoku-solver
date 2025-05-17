@@ -4,6 +4,7 @@ public class ArrayList<T> implements List<T> {
     private static int CAPACITY = 1000;
     private T[] items;
 
+    @SuppressWarnings("unchecked")
     public ArrayList() {
         size = 0;
         pointer = 0;
