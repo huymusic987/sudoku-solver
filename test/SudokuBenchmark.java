@@ -56,8 +56,8 @@ public class SudokuBenchmark {
             // SudokuTestUtils.testSolver(genetic, puzzles, difficulty);
 
             // Test Constraint Satisfaction Solver
-            // SudokuSolver csp = new ConstraintSatisfactionSolver();
-            // SudokuTestUtils.testSolver(csp, puzzles, difficulty);
+            SudokuSolver csp = new ConstraintSatisfaction();
+            SudokuTestUtils.testSolver(csp, puzzles, difficulty, true);
         }
     }
 }
