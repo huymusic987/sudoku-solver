@@ -1,3 +1,5 @@
+package algorithms;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -5,7 +7,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class ConstraintSatisfaction implements SudokuSolver{
+import structures.List;
+import structures.ArrayList;
+import utils.SudokuIOHandling;
+import utils.SudokuTestUtils;
+
+public class ConstraintSatisfaction implements SudokuSolver {
     public static void main(String[] args) {
         String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
         String basePath = "SudokuTest/";
@@ -26,7 +33,7 @@ public class ConstraintSatisfaction implements SudokuSolver{
             SudokuTestUtils.testSolver(csp, puzzles, difficulty, true);
         }
     }
-    
+
     private static final int GRID_SIZE = 9;
 
     // Funtion called sudoku solver return solved board or
@@ -45,7 +52,7 @@ public class ConstraintSatisfaction implements SudokuSolver{
         } catch (TimeoutException e) {
             System.out.println("Solver runtime exceed 2 minutes.");
         } catch (InterruptedException | ExecutionException e) {
-            System.out.println("An error occurred: " + e.getMessage()); 
+            System.out.println("An error occurred: " + e.getMessage());
         } finally {
             executor.shutdown();
         }
@@ -81,7 +88,7 @@ public class ConstraintSatisfaction implements SudokuSolver{
     }
 
     // Average Time Complexity: O(81) = O(1)
-    // Iterate through the sudoku board to find most 
+    // Iterate through the sudoku board to find most
     // constrained cells with fewest possible values
     private static int[] findMostConstrainedCell(int[][] board) {
         int[] result = null;
@@ -135,7 +142,7 @@ public class ConstraintSatisfaction implements SudokuSolver{
                 }
             }
         }
-        //Average Time Complexity: O(1)
+        // Average Time Complexity: O(1)
         // Collect all unused numbers
         List<Integer> possibleValues = new ArrayList<>();
         for (int num = 1; num <= GRID_SIZE; num++) {
@@ -157,27 +164,29 @@ public class ConstraintSatisfaction implements SudokuSolver{
                 }
             }
         }
-        
+
         // Check row constraint
         for (int row = 0; row < GRID_SIZE; row++) {
             boolean[] used = new boolean[GRID_SIZE + 1];
             for (int col = 0; col < GRID_SIZE; col++) {
                 int num = board[row][col];
-                if (used[num]) return false;
+                if (used[num])
+                    return false;
                 used[num] = true;
             }
         }
-        
+
         // Check column constraint
         for (int col = 0; col < GRID_SIZE; col++) {
             boolean[] used = new boolean[GRID_SIZE + 1];
             for (int row = 0; row < GRID_SIZE; row++) {
                 int num = board[row][col];
-                if (used[num]) return false;
+                if (used[num])
+                    return false;
                 used[num] = true;
             }
         }
-        
+
         // Check 3x3 subgrid constraint
         for (int boxRow = 0; boxRow < 3; boxRow++) {
             for (int boxCol = 0; boxCol < 3; boxCol++) {
@@ -185,13 +194,14 @@ public class ConstraintSatisfaction implements SudokuSolver{
                 for (int row = boxRow * 3; row < boxRow * 3 + 3; row++) {
                     for (int col = boxCol * 3; col < boxCol * 3 + 3; col++) {
                         int num = board[row][col];
-                        if (used[num]) return false;
+                        if (used[num])
+                            return false;
                         used[num] = true;
                     }
                 }
             }
         }
-        
+
         return true;
     }
 }

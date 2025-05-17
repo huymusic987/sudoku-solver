@@ -1,3 +1,9 @@
+package utils;
+
+import algorithms.SudokuSolver;
+import structures.ArrayList;
+import structures.List;
+
 public class SudokuTestUtils {
     public static void testSolver(SudokuSolver solver, List<int[][]> puzzles, String difficulty, boolean printDetails) {
         int correctCount = 0;

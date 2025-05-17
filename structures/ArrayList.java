@@ -1,3 +1,5 @@
+package structures;
+
 public class ArrayList<T> implements List<T> {
     private int size;
     private int pointer;
