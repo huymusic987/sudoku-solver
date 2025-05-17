@@ -1,4 +1,89 @@
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
 public class Backtracking implements SudokuSolver {
+    public static void main(String args[]) {
+        String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
+        String basePath = "SudokuTest/";
+
+        for (String difficulty : difficulties) {
+            String puzzleFile = basePath + difficulty + "_puzzles.txt";
+            List<int[][]> puzzles = SudokuTestUtils.loadSudokuPuzzles(puzzleFile);
+
+            if (puzzles == null) {
+                System.out.println("Error loading " + difficulty + " puzzles");
+                continue;
+            }
+
+            System.out.println("\nTesting difficulty: " + difficulty);
+
+            SudokuSolver backtracking = new Backtracking();
+
+            SudokuTestUtils.testSolver(backtracking, puzzles, difficulty, true);
+        }
+    }
+
+    public static List<int[][]> loadSudokuPuzzles(String filename) {
+        List<int[][]> boards = new ArrayList<>();
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            int[][] board = null;
+            int row = 0;
+
+            while ((line = reader.readLine()) != null) {
+                if (line.trim().isEmpty()) {
+                    if (board != null && row == 9) {
+                        boards.add(board);
+                    }
+                    board = new int[9][9];
+                    row = 0;
+                    continue;
+                }
+
+                String[] values = line.trim().split("\\s+");
+                if (values.length != 9) {
+                    System.out.println("Invalid row format in file " + filename + ": " + line);
+                    return null;
+                }
+
+                if (board == null) {
+                    board = new int[9][9];
+                }
+
+                for (int col = 0; col < 9; col++) {
+                    try {
+                        int value = Integer.parseInt(values[col]);
+                        if (value < 0 || value > 9) {
+                            System.out.println("Invalid number in file " + filename + ": " + value);
+                            return null;
+                        }
+                        board[row][col] = value;
+                    } catch (NumberFormatException e) {
+                        System.out.println("Invalid number format in file " + filename + ": " + values[col]);
+                        return null;
+                    }
+                }
+                row++;
+
+                if (row == 9) {
+                    boards.add(board);
+                    board = null;
+                    row = 0;
+                }
+            }
+
+            if (board != null && row == 9) {
+                boards.add(board);
+            }
+
+            return boards.size() == 0 ? null : boards;
+        } catch (IOException e) {
+            System.out.println("Error reading file " + filename + ": " + e.getMessage());
+            return null;
+        }
+    }
+
     @Override
     public int[][] solve(int[][] puzzle) {
         if (!isValidBoard(puzzle)) {
@@ -115,29 +200,5 @@ public class Backtracking implements SudokuSolver {
         }
 
         return true;
-    }
-
-    public void printBoard(int[][] board) {
-        System.out.println();
-        for (int row = 0; row < 9; row++) {
-            if ((row % 3 == 0) && (row != 0)) {
-                System.out.println("-----------------------------");
-            }
-            for (int col = 0; col < 9; col++) {
-                if ((col % 3 == 0) && (col != 0)) {
-                    System.out.print("|");
-                }
-                final int cellValue = board[row][col];
-                System.out.print(" ");
-                if (cellValue == 0) {
-                    System.out.print(" ");
-                } else {
-                    System.out.print(cellValue);
-                }
-                System.out.print(" ");
-            }
-            System.out.println();
-        }
-        System.out.println();
     }
 }
