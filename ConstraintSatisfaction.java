@@ -5,71 +5,25 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-public class ConstraintSatisfaction {
-        public static void main(String[] args) {
-        
-        //Load solvable sudoku
-        String[] difficulties = { "easy", "medium", "hard", "very_hard" };
-        String basePath = "sudoku-solver/SudokuTest/";
+public class ConstraintSatisfaction implements SudokuSolver{
+    public static void main(String[] args) {
+        String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
+        String basePath = "SudokuTest/";
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = SudokuTest.loadSudokuPuzzles(puzzleFile);
+            List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
 
             if (puzzles == null) {
                 System.out.println("Error loading " + difficulty + " puzzles");
                 continue;
             }
-            int puzzleCount = puzzles.size();
-            int constraintCorrectCount = 0;
-            long constraintTotalTime = 0;
 
-            for (int i = 0; i < puzzleCount; i++) {
-                int[][] puzzle = SudokuTest.copy(puzzles.get(i));
-                long startTime = System.nanoTime();
-                boolean solved = constraintSatisfaction(puzzle);
-                long endTime = System.nanoTime();
-                long duration = endTime - startTime;
-                constraintTotalTime += duration;
+            System.out.println("\nTesting difficulty: " + difficulty);
 
-                if (solved && isSolved(puzzle)) {
-                System.out.print("The board was solved correctly!");
-                SudokuTest.printBoard(puzzle);
-                constraintCorrectCount++;
-                }
-            }
+            ConstraintSatisfaction csp = new ConstraintSatisfaction();
 
-            double constraintAvgTimeMs = (puzzleCount > 0) ? (constraintTotalTime /
-            1_000_000.0) / puzzleCount : 0;
-            System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved correctly, Average time: %.4f ms%n",
-            difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
-            constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
-            System.out.println("--------------------------------------------------------------------------------------");
-        }
-
-        // Load unsolvable puzzles
-        String unsolvableFile = basePath + "unsolvable_puzzles.txt";
-        List<int[][]> unsolvablePuzzles = SudokuTest.loadSudokuPuzzles(unsolvableFile);
-        if (unsolvablePuzzles == null) {
-            System.out.println("Error loading unsolvable puzzles");
-            return;
-        }
-
-        //Test unsolvable sudoku
-        System.out.println("\nUnsolvable Puzzles (Constraint Satisfaction):");
-        for (int i = 0; i < unsolvablePuzzles.size(); i++) {
-            int[][] puzzle = SudokuTest.copy(unsolvablePuzzles.get(i));
-            System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
-            long startTime = System.nanoTime();
-            boolean result = constraintSatisfaction(puzzle);
-            long endTime = System.nanoTime();
-            double timeMs = (endTime - startTime) / 1_000_000.0;
-            System.out.printf("Result: %s, Time: %.4f ms%n",
-                      !result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
-            if (!result) {
-                System.out.println("Solved board (should be invalid):");
-                SudokuTest.printBoard(puzzle);
-            }
+            SudokuTestUtils.testSolver(csp, puzzles, difficulty, true);
         }
     }
     
@@ -77,15 +31,19 @@ public class ConstraintSatisfaction {
 
     // Funtion called sudoku solver return solved board or
     // return null whenever it exceed 2 minutes or an error is occured
-    public static int[][] solve(int[][] board) {
-        final int[][] copiedBoard = SudokuTest.copy(board);
+    @Override
+    public int[][] solve(int[][] board) {
+        final int[][] copiedBoard = new int[GRID_SIZE][GRID_SIZE];
+        for (int i = 0; i < GRID_SIZE; i++) {
+            System.arraycopy(board[i], 0, copiedBoard[i], 0, 9);
+        }
 
         ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         Future<Boolean> future = executor.submit(() -> constraintSatisfaction(copiedBoard));
 
         try {
             boolean solved = future.get(2, TimeUnit.MINUTES);
-            if (!isSolved(board) && solved) {
+            if (!isValidBoard(board) && solved) {
                 return board;
             }
         } catch (TimeoutException e) {
@@ -193,9 +151,8 @@ public class ConstraintSatisfaction {
         return possibleValues;
     }
 
-    //AI prompt: Generate a function that check if the 2D array sudoku board is solved
-    //correctly without dupplicated cells or empty cells.
-    public static boolean isSolved(int[][] board) {
+    @Override
+    public boolean isValidBoard(int[][] board) {
         // Check if the board is filled
         for (int row = 0; row < GRID_SIZE; row++) {
             for (int col = 0; col < GRID_SIZE; col++) {
