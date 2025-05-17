@@ -49,4 +49,8 @@ public interface List<T> {
 
     public boolean add(T value);
 
+    public boolean isEmpty();
+
+    public boolean set(int index, T value);
+
 }

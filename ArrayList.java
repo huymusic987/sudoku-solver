@@ -123,4 +123,18 @@ public class ArrayList<T> implements List<T> {
         return true;
     }
 
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
+
+    @Override
+    public boolean set(int index, T value) {
+        if (index >= size || index < 0) {
+            return false;
+        }
+        items[index] = value;
+        return true;
+    }
+
 }
