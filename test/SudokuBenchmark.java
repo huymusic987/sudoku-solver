@@ -1,6 +1,7 @@
 package test;
 
 import algorithms.Backtracking;
+import algorithms.ConstraintSatisfaction;
 import algorithms.SudokuSolver;
 import structures.List;
 import utils.SudokuIOHandling;
