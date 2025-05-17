@@ -1,8 +1,8 @@
-public class Backtracking {
-
+public class Backtracking implements SudokuSolver {
+    @Override
     public int[][] solve(int[][] puzzle) {
         if (!isValidBoard(puzzle)) {
-            return null;
+            throw new IllegalArgumentException("Invalid puzzle board input.");
         }
 
         long startTime = System.currentTimeMillis();
@@ -10,57 +10,49 @@ public class Backtracking {
         if (BacktrackingRecursive(puzzle, startTime)) {
             return puzzle;
         } else {
-            return null;
+            throw new RuntimeException("Backtracking failed to solve the puzzle.");
         }
     }
 
-    private static boolean isNumberInRow(int[][] board, int number, int row) {
+    private boolean isValidNumber(int[][] board, int number, int row, int column) {
+        // Check row
         for (int i = 0; i < 9; i++) {
             if (board[row][i] == number) {
-                return true;
+                return false;
             }
         }
-        return false;
-    }
 
-    private static boolean isNumberInColumn(int[][] board, int number, int column) {
+        // Check column
         for (int i = 0; i < 9; i++) {
             if (board[i][column] == number) {
-                return true;
+                return false;
             }
         }
-        return false;
-    }
 
-    private static boolean isNumberInBox(int[][] board, int number, int row, int column) {
-        int localBoxRow = row - row % 3;
-        int localBoxColumn = column - column % 3;
-
-        for (int i = localBoxRow; i < localBoxRow + 3; i++) {
-            for (int j = localBoxColumn; j < localBoxColumn + 3; j++) {
+        // Check 3x3 box
+        int startRow = row - row % 3;
+        int startCol = column - column % 3;
+        for (int i = startRow; i < startRow + 3; i++) {
+            for (int j = startCol; j < startCol + 3; j++) {
                 if (board[i][j] == number) {
-                    return true;
+                    return false;
                 }
             }
         }
-        return false;
+
+        return true;
     }
 
-    private static boolean isValidPlacement(int[][] board, int number, int row, int column) {
-        return !isNumberInRow(board, number, row) &&
-                !isNumberInColumn(board, number, column) &&
-                !isNumberInBox(board, number, row, column);
-    }
-
-    private static boolean BacktrackingRecursive(int[][] board, long startTime) {
+    private boolean BacktrackingRecursive(int[][] board, long startTime) {
         if (System.currentTimeMillis() - startTime > 120000) {
             throw new RuntimeException("Backtracking exceeded time limit of 2 minutes");
         }
+
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
                 if (board[row][column] == 0) {
                     for (int numberToTry = 1; numberToTry <= 9; numberToTry++) {
-                        if (isValidPlacement(board, numberToTry, row, column)) {
+                        if (isValidNumber(board, numberToTry, row, column)) {
                             board[row][column] = numberToTry;
                             if (BacktrackingRecursive(board, startTime)) {
                                 return true;
@@ -73,36 +65,38 @@ public class Backtracking {
                 }
             }
         }
+
         return true;
     }
 
-    private static boolean isValidBoard(int[][] board) {
+    @Override
+    public boolean isValidBoard(int[][] board) {
         // Check rows
         for (int row = 0; row < 9; row++) {
             boolean[] seen = new boolean[10];
             for (int col = 0; col < 9; col++) {
                 int val = board[row][col];
                 if (val != 0) {
-                    if (seen[val]) {
-                        return false; // Duplicate in row
-                    }
+                    if (seen[val])
+                        return false;
                     seen[val] = true;
                 }
             }
         }
+
         // Check columns
         for (int col = 0; col < 9; col++) {
             boolean[] seen = new boolean[10];
             for (int row = 0; row < 9; row++) {
                 int val = board[row][col];
                 if (val != 0) {
-                    if (seen[val]) {
-                        return false; // Duplicate in column
-                    }
+                    if (seen[val])
+                        return false;
                     seen[val] = true;
                 }
             }
         }
+
         // Check 3x3 boxes
         for (int boxRow = 0; boxRow < 9; boxRow += 3) {
             for (int boxCol = 0; boxCol < 9; boxCol += 3) {
@@ -111,15 +105,39 @@ public class Backtracking {
                     for (int j = boxCol; j < boxCol + 3; j++) {
                         int val = board[i][j];
                         if (val != 0) {
-                            if (seen[val]) {
-                                return false; // Duplicate in box
-                            }
+                            if (seen[val])
+                                return false;
                             seen[val] = true;
                         }
                     }
                 }
             }
         }
+
         return true;
+    }
+
+    public void printBoard(int[][] board) {
+        System.out.println();
+        for (int row = 0; row < 9; row++) {
+            if ((row % 3 == 0) && (row != 0)) {
+                System.out.println("-----------------------------");
+            }
+            for (int col = 0; col < 9; col++) {
+                if ((col % 3 == 0) && (col != 0)) {
+                    System.out.print("|");
+                }
+                final int cellValue = board[row][col];
+                System.out.print(" ");
+                if (cellValue == 0) {
+                    System.out.print(" ");
+                } else {
+                    System.out.print(cellValue);
+                }
+                System.out.print(" ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
