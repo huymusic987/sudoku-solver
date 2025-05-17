@@ -65,7 +65,7 @@ public class ConstraintSatisfaction {
             long endTime = System.nanoTime();
             double timeMs = (endTime - startTime) / 1_000_000.0;
             System.out.printf("Result: %s, Time: %.4f ms%n",
-                    !result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
+                      !result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
             if (!result) {
                 System.out.println("Solved board (should be invalid):");
                 SudokuTest.printBoard(puzzle);
@@ -75,6 +75,8 @@ public class ConstraintSatisfaction {
     
     private static final int GRID_SIZE = 9;
 
+    // Funtion called sudoku solver return solved board or
+    // return null whenever it exceed 2 minutes or an error is occured
     public static int[][] solve(int[][] board) {
         final int[][] copiedBoard = SudokuTest.copy(board);
 
@@ -96,7 +98,10 @@ public class ConstraintSatisfaction {
         return null;
     }
 
-    // Average complexity: O(n)
+    // Average Time Complexity: O(n^k)
+    // n is the number of unassigned cells
+    // k is the number of possible values for each cell
+    // Worst Case: O(9^81)
     public static boolean constraintSatisfaction(int[][] board) {
         // Find the most constrained cell (cell with the fewest possible values)
         int[] cell = findMostConstrainedCell(board);
@@ -121,7 +126,9 @@ public class ConstraintSatisfaction {
         return false;
     }
 
-    // Average Complexity: O(n^3)
+    // Average Time Complexity: O(81) = O(1)
+    // Iterate through the sudoku board to find most 
+    // constrained cells with fewest possible values
     private static int[] findMostConstrainedCell(int[][] board) {
         int[] result = null;
         int minOptions = GRID_SIZE + 1;
@@ -141,10 +148,13 @@ public class ConstraintSatisfaction {
         return result;
     }
 
-    // Average Complexity: O(n)
+    // Average Time Complexity: O(27) = O(1)
+    // Return a list of possible values by checking
+    // row, column and 3x3 sub-grid constrain
     private static List<Integer> getPossibleValues(int[][] board, int row, int col) {
         boolean[] used = new boolean[GRID_SIZE + 1];
 
+        // Time Complexity: O(9)
         // Mark numbers used in the row
         for (int i = 0; i < GRID_SIZE; i++) {
             if (board[row][i] != 0) {
@@ -152,6 +162,7 @@ public class ConstraintSatisfaction {
             }
         }
 
+        // Time Complexity: O(9)
         // Mark numbers used in the column
         for (int i = 0; i < GRID_SIZE; i++) {
             if (board[i][col] != 0) {
@@ -159,6 +170,7 @@ public class ConstraintSatisfaction {
             }
         }
 
+        // Time Complexity: O(9)
         // Mark numbers used in the 3x3 subgrid
         int localBoxRow = row - row % 3;
         int localBoxCol = col - col % 3;
@@ -169,7 +181,7 @@ public class ConstraintSatisfaction {
                 }
             }
         }
-
+        //Average Time Complexity: O(1)
         // Collect all unused numbers
         List<Integer> possibleValues = new ArrayList<>();
         for (int num = 1; num <= GRID_SIZE; num++) {
@@ -181,6 +193,8 @@ public class ConstraintSatisfaction {
         return possibleValues;
     }
 
+    //AI prompt: Generate a function that check if the 2D array sudoku board is solved
+    //correctly without dupplicated cells or empty cells.
     public static boolean isSolved(int[][] board) {
         // Check if the board is filled
         for (int row = 0; row < GRID_SIZE; row++) {
