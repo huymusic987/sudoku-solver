@@ -9,7 +9,7 @@ public class Backtracking implements SudokuSolver {
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = SudokuTestUtils.loadSudokuPuzzles(puzzleFile);
+            List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
 
             if (puzzles == null) {
                 System.out.println("Error loading " + difficulty + " puzzles");
