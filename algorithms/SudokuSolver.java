@@ -1,3 +1,5 @@
+package algorithms;
+
 public interface SudokuSolver {
     int[][] solve(int[][] board);
 

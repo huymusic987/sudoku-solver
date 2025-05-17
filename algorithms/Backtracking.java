@@ -1,3 +1,9 @@
+package algorithms;
+
+import structures.List;
+import utils.SudokuIOHandling;
+import utils.SudokuTestUtils;
+
 public class Backtracking implements SudokuSolver {
     public static void main(String args[]) {
         String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };

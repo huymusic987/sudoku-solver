@@ -1,3 +1,5 @@
+package algorithms;
+
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -5,10 +7,12 @@ import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import structures.List;
+
 public class ConstraintSatisfaction {
-        public static void main(String[] args) {
-        
-        //Load solvable sudoku
+    public static void main(String[] args) {
+
+        // Load solvable sudoku
         String[] difficulties = { "easy", "medium", "hard", "very_hard" };
         String basePath = "sudoku-solver/SudokuTest/";
 
@@ -33,18 +37,19 @@ public class ConstraintSatisfaction {
                 constraintTotalTime += duration;
 
                 if (solved && isSolved(puzzle)) {
-                System.out.print("The board was solved correctly!");
-                SudokuTest.printBoard(puzzle);
-                constraintCorrectCount++;
+                    System.out.print("The board was solved correctly!");
+                    SudokuTest.printBoard(puzzle);
+                    constraintCorrectCount++;
                 }
             }
 
             double constraintAvgTimeMs = (puzzleCount > 0) ? (constraintTotalTime /
-            1_000_000.0) / puzzleCount : 0;
+                    1_000_000.0) / puzzleCount : 0;
             System.out.printf("%s (Constraint Satisfaction): %d/%d puzzles solved correctly, Average time: %.4f ms%n",
-            difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
-            constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
-            System.out.println("--------------------------------------------------------------------------------------");
+                    difficulty.substring(0, 1).toUpperCase() + difficulty.substring(1),
+                    constraintCorrectCount, puzzleCount, constraintAvgTimeMs);
+            System.out
+                    .println("--------------------------------------------------------------------------------------");
         }
 
         // Load unsolvable puzzles
@@ -55,7 +60,7 @@ public class ConstraintSatisfaction {
             return;
         }
 
-        //Test unsolvable sudoku
+        // Test unsolvable sudoku
         System.out.println("\nUnsolvable Puzzles (Constraint Satisfaction):");
         for (int i = 0; i < unsolvablePuzzles.size(); i++) {
             int[][] puzzle = SudokuTest.copy(unsolvablePuzzles.get(i));
@@ -65,14 +70,14 @@ public class ConstraintSatisfaction {
             long endTime = System.nanoTime();
             double timeMs = (endTime - startTime) / 1_000_000.0;
             System.out.printf("Result: %s, Time: %.4f ms%n",
-                      !result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
+                    !result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
             if (!result) {
                 System.out.println("Solved board (should be invalid):");
                 SudokuTest.printBoard(puzzle);
             }
         }
     }
-    
+
     private static final int GRID_SIZE = 9;
 
     // Funtion called sudoku solver return solved board or
@@ -91,7 +96,7 @@ public class ConstraintSatisfaction {
         } catch (TimeoutException e) {
             System.out.println("Solver runtime exceed 2 minutes.");
         } catch (InterruptedException | ExecutionException e) {
-            System.out.println("An error occurred: " + e.getMessage()); 
+            System.out.println("An error occurred: " + e.getMessage());
         } finally {
             executor.shutdown();
         }
@@ -127,7 +132,7 @@ public class ConstraintSatisfaction {
     }
 
     // Average Time Complexity: O(81) = O(1)
-    // Iterate through the sudoku board to find most 
+    // Iterate through the sudoku board to find most
     // constrained cells with fewest possible values
     private static int[] findMostConstrainedCell(int[][] board) {
         int[] result = null;
@@ -181,7 +186,7 @@ public class ConstraintSatisfaction {
                 }
             }
         }
-        //Average Time Complexity: O(1)
+        // Average Time Complexity: O(1)
         // Collect all unused numbers
         List<Integer> possibleValues = new ArrayList<>();
         for (int num = 1; num <= GRID_SIZE; num++) {
@@ -193,8 +198,9 @@ public class ConstraintSatisfaction {
         return possibleValues;
     }
 
-    //AI prompt: Generate a function that check if the 2D array sudoku board is solved
-    //correctly without dupplicated cells or empty cells.
+    // AI prompt: Generate a function that check if the 2D array sudoku board is
+    // solved
+    // correctly without dupplicated cells or empty cells.
     public static boolean isSolved(int[][] board) {
         // Check if the board is filled
         for (int row = 0; row < GRID_SIZE; row++) {
@@ -204,27 +210,29 @@ public class ConstraintSatisfaction {
                 }
             }
         }
-        
+
         // Check row constraint
         for (int row = 0; row < GRID_SIZE; row++) {
             boolean[] used = new boolean[GRID_SIZE + 1];
             for (int col = 0; col < GRID_SIZE; col++) {
                 int num = board[row][col];
-                if (used[num]) return false;
+                if (used[num])
+                    return false;
                 used[num] = true;
             }
         }
-        
+
         // Check column constraint
         for (int col = 0; col < GRID_SIZE; col++) {
             boolean[] used = new boolean[GRID_SIZE + 1];
             for (int row = 0; row < GRID_SIZE; row++) {
                 int num = board[row][col];
-                if (used[num]) return false;
+                if (used[num])
+                    return false;
                 used[num] = true;
             }
         }
-        
+
         // Check 3x3 subgrid constraint
         for (int boxRow = 0; boxRow < 3; boxRow++) {
             for (int boxCol = 0; boxCol < 3; boxCol++) {
@@ -232,13 +240,14 @@ public class ConstraintSatisfaction {
                 for (int row = boxRow * 3; row < boxRow * 3 + 3; row++) {
                     for (int col = boxCol * 3; col < boxCol * 3 + 3; col++) {
                         int num = board[row][col];
-                        if (used[num]) return false;
+                        if (used[num])
+                            return false;
                         used[num] = true;
                     }
                 }
             }
         }
-        
+
         return true;
     }
 }
