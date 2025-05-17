@@ -1,3 +1,4 @@
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -11,11 +12,9 @@ public class ConstraintSatisfaction {
         String[] difficulties = { "easy", "medium", "hard", "very_hard" };
         String basePath = "sudoku-solver/SudokuTest/";
 
-        SudokuTest test = new SudokuTest();
-
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = test.loadSudokuPuzzles(puzzleFile);
+            List<int[][]> puzzles = SudokuTest.loadSudokuPuzzles(puzzleFile);
 
             if (puzzles == null) {
                 System.out.println("Error loading " + difficulty + " puzzles");
@@ -26,7 +25,7 @@ public class ConstraintSatisfaction {
             long constraintTotalTime = 0;
 
             for (int i = 0; i < puzzleCount; i++) {
-                int[][] puzzle = test.copy(puzzles.get(i));
+                int[][] puzzle = SudokuTest.copy(puzzles.get(i));
                 long startTime = System.nanoTime();
                 boolean solved = constraintSatisfaction(puzzle);
                 long endTime = System.nanoTime();
@@ -35,7 +34,7 @@ public class ConstraintSatisfaction {
 
                 if (solved && isSolved(puzzle)) {
                 System.out.print("The board was solved correctly!");
-                test.printBoard(puzzle);
+                SudokuTest.printBoard(puzzle);
                 constraintCorrectCount++;
                 }
             }
@@ -50,7 +49,7 @@ public class ConstraintSatisfaction {
 
         // Load unsolvable puzzles
         String unsolvableFile = basePath + "unsolvable_puzzles.txt";
-        List<int[][]> unsolvablePuzzles = test.loadSudokuPuzzles(unsolvableFile);
+        List<int[][]> unsolvablePuzzles = SudokuTest.loadSudokuPuzzles(unsolvableFile);
         if (unsolvablePuzzles == null) {
             System.out.println("Error loading unsolvable puzzles");
             return;
@@ -59,7 +58,7 @@ public class ConstraintSatisfaction {
         //Test unsolvable sudoku
         System.out.println("\nUnsolvable Puzzles (Constraint Satisfaction):");
         for (int i = 0; i < unsolvablePuzzles.size(); i++) {
-            int[][] puzzle = test.copy(unsolvablePuzzles.get(i));
+            int[][] puzzle = SudokuTest.copy(unsolvablePuzzles.get(i));
             System.out.printf("Attempting unsolvable puzzle %d:%n", i + 1);
             long startTime = System.nanoTime();
             boolean result = constraintSatisfaction(puzzle);
@@ -69,29 +68,28 @@ public class ConstraintSatisfaction {
                     !result ? "Returned true (unexpected)" : "Returned false (expected)", timeMs);
             if (!result) {
                 System.out.println("Solved board (should be invalid):");
-                test.printBoard(puzzle);
+                SudokuTest.printBoard(puzzle);
             }
         }
     }
     
     private static final int GRID_SIZE = 9;
 
-    public static int[][] solve(int[][] board) throws RuntimeException {
-        SudokuTest test = new SudokuTest();
-        final int[][] copiedBoard = test.copy(board);
+    public static int[][] solve(int[][] board) {
+        final int[][] copiedBoard = SudokuTest.copy(board);
 
         ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
         Future<Boolean> future = executor.submit(() -> constraintSatisfaction(copiedBoard));
 
         try {
             boolean solved = future.get(2, TimeUnit.MINUTES);
-            if (!isSolved(board) && constraintSatisfaction(board)) {
+            if (!isSolved(board) && solved) {
                 return board;
             }
         } catch (TimeoutException e) {
             System.out.println("Solver runtime exceed 2 minutes.");
-        } catch (Exception e) {
-            System.out.println("Error: " + e.getMessage());
+        } catch (InterruptedException | ExecutionException e) {
+            System.out.println("An error occurred: " + e.getMessage()); 
         } finally {
             executor.shutdown();
         }
