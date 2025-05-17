@@ -33,17 +33,13 @@ public class ConstraintSatisfaction implements SudokuSolver{
     // return null whenever it exceed 2 minutes or an error is occured
     @Override
     public int[][] solve(int[][] board) {
-        final int[][] copiedBoard = new int[GRID_SIZE][GRID_SIZE];
-        for (int i = 0; i < GRID_SIZE; i++) {
-            System.arraycopy(board[i], 0, copiedBoard[i], 0, 9);
-        }
 
         ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        Future<Boolean> future = executor.submit(() -> constraintSatisfaction(copiedBoard));
+        Future<Boolean> future = executor.submit(() -> constraintSatisfaction(board));
 
         try {
             boolean solved = future.get(2, TimeUnit.MINUTES);
-            if (!isValidBoard(board) && solved) {
+            if (isValidBoard(board) && solved) {
                 return board;
             }
         } catch (TimeoutException e) {
