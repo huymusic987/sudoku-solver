@@ -1,10 +1,10 @@
 package utils;
 
-import algorithms.SudokuSolver;
+import algorithms.RMIT_Sudoku_Solver;
 import structures.List;
 
 public class SudokuTestUtils {
-    public static void testSolver(SudokuSolver solver, List<int[][]> puzzles, String difficulty,
+    public static void testSolver(RMIT_Sudoku_Solver solver, List<int[][]> puzzles, String difficulty,
             boolean printErrorDetails) {
         int correctCount = 0;
         long totalTime = 0;

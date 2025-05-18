@@ -4,7 +4,7 @@ import java.util.Random;
 import structures.List;
 import structures.ArrayList;
 
-public class SimpleGenetic implements SudokuSolver {
+public class SimpleGenetic implements RMIT_Sudoku_Solver {
     // ------------------------------------------------------------------------------------------------
     // Supporting properties
     private static final int generation_display = 1;

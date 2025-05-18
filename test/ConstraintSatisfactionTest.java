@@ -1,7 +1,7 @@
 package test;
 
 import algorithms.ConstraintSatisfaction;
-import algorithms.SudokuSolver;
+import algorithms.RMIT_Sudoku_Solver;
 import structures.List;
 import utils.SudokuIOHandling;
 import utils.SudokuTestUtils;
@@ -22,7 +22,7 @@ public class ConstraintSatisfactionTest {
 
             System.out.println("\nTesting difficulty: " + difficulty);
 
-            SudokuSolver csp = new ConstraintSatisfaction();
+            RMIT_Sudoku_Solver csp = new ConstraintSatisfaction();
 
             SudokuTestUtils.testSolver(csp, puzzles, difficulty, true);
         }

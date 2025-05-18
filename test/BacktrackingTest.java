@@ -1,7 +1,7 @@
 package test;
 
 import algorithms.Backtracking;
-import algorithms.SudokuSolver;
+import algorithms.RMIT_Sudoku_Solver;
 import structures.List;
 import utils.SudokuIOHandling;
 
@@ -11,7 +11,7 @@ public class BacktrackingTest {
         String puzzleFile = basePath + "medium" + "_puzzles.txt";
         List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
         int[][] puzzle = puzzles.get(0);
-        SudokuSolver solver = new Backtracking();
+        RMIT_Sudoku_Solver solver = new Backtracking();
         long totalTime = 0;
         try {
             System.out.println("Original Sudoku puzzle:");

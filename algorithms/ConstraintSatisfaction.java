@@ -3,7 +3,7 @@ package algorithms;
 import structures.ArrayList;
 import structures.List;
 
-public class ConstraintSatisfaction implements SudokuSolver {
+public class ConstraintSatisfaction implements RMIT_Sudoku_Solver {
     private static final int GRID_SIZE = 9;
 
     // Funtion called sudoku solver return solved board or
