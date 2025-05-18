@@ -7,7 +7,7 @@ import utils.SudokuTestUtils;
 public class Backtracking implements SudokuSolver {
     public static void main(String args[]) {
         String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
-        String basePath = "SudokuTest/";
+        String basePath = "sudoku-solver/puzzles/";
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";

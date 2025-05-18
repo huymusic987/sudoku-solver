@@ -15,7 +15,7 @@ public class SimpleGenetic implements SudokuSolver {
     public static void main(String[] args) {
 
         String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
-        String basePath = "SudokuTest/";
+        String basePath = "sudoku-solver/puzzles/";
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
@@ -30,17 +30,34 @@ public class SimpleGenetic implements SudokuSolver {
 
             SudokuSolver SimpleGenetic = new SimpleGenetic(100, 0.2, 
                                                             10, "Merge Sort");
-
+                                                            
             SudokuTestUtils.testSolver(SimpleGenetic, puzzles, difficulty, true);
         }
+
+        // Additional: Solve single puzzle in details to show algorithm's operation
+        int[][] puzzle = {
+            {5, 3, 0, 0, 7, 0, 0, 0, 0},
+            {6, 0, 0, 1, 9, 5, 0, 0, 0},
+            {0, 9, 8, 0, 0, 0, 0, 6, 0},
+            {8, 0, 0, 0, 6, 0, 0, 0, 3},
+            {4, 0, 0, 8, 0, 3, 0, 0, 1},
+            {7, 0, 0, 0, 2, 0, 0, 0, 6},
+            {0, 6, 0, 0, 0, 0, 2, 8, 0},
+            {0, 0, 0, 4, 1, 9, 0, 0, 5},
+            {0, 0, 0, 0, 8, 0, 0, 7, 9}
+        };
+        System.out.println("\nDetails of Algorithms:");
+        System.out.println("Initial puzzle: ");
+        printBoard(puzzle);
+        SimpleGenetic SimpleGeneticDetails = new SimpleGenetic(1000, 0.2, 
+                                                            10, "Merge Sort");
+        SimpleGeneticDetails.SolveDetails(puzzle, true);
 
     }
 
     // ------------------------------------------------------------------------------------------------
     // Supporting properties
     private static final int generation_display = 1;
-    private static final boolean generation_flag = false;
-    String sort = "Merge Sort"; // Choose sorting algorithms
 
     // Sudoku board-type properties
     // Should be constant throughout the whole program
@@ -56,6 +73,7 @@ public class SimpleGenetic implements SudokuSolver {
     int POPULATION_SIZE = 0; // Number of solving candidates in 1 generation
     double MUTATION_RATE = 0.0; // Lower mutation for easy puzzles
     int MAX_GENERATIONS = 0; // Fewer generations needed for easy puzzles
+    String sort = "Merge Sort"; // Choose sorting algorithms
 
     // ------------------------------------------------------------------------------------------------
     // Data Structure: Individual class
@@ -71,13 +89,14 @@ public class SimpleGenetic implements SudokuSolver {
     }
 
     // ----------------------------------------------------------------------------------------
-    // Constructor - accepting 3 parameters to declare the SimpleGeneticSudokuSolver
-    // object
+    // Constructor - accepting 3 parameters to declare the SimpleGenetic object
     public SimpleGenetic(int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS, String sort) {
         this.POPULATION_SIZE = POPULATION_SIZE;
         this.MUTATION_RATE = MUTATION_RATE;
         this.MAX_GENERATIONS = MAX_GENERATIONS;
         this.sort = sort;
+
+        printGAConfig(POPULATION_SIZE, MUTATION_RATE, MAX_GENERATIONS);
     }
 
     // --------------------------------------------------------------------
@@ -97,11 +116,11 @@ public class SimpleGenetic implements SudokuSolver {
         }
 
         long startTime = System.currentTimeMillis();
-        return Genetic(puzzle, startTime);
+        return Genetic(puzzle, startTime, false);
     }
 
     // Support Method 1: Genetic(int[][] board, long startTime) 
-    public int[][] Genetic(int[][] puzzle, long startTime) {
+    public int[][] Genetic(int[][] puzzle, long startTime, boolean details) {
         List<Individual> population = initializePopulation(puzzle);
 
         for (int generation = 0; generation < MAX_GENERATIONS; generation++) {
@@ -118,8 +137,11 @@ public class SimpleGenetic implements SudokuSolver {
             }
 
             if (population.get(0).fitness == 0) {
-                //System.out.println("Solution found at generation: " + generation + " \n");
-                //printBoard(population.get(0).board);
+                if (details) {
+                    System.out.println("Solution found at generation: " + generation + " \n");
+                    printBoard(population.get(0).board);
+                }
+                
                 return population.get(0).board;
             }
 
@@ -139,14 +161,17 @@ public class SimpleGenetic implements SudokuSolver {
 
             population = nextGeneration;
             if (generation % generation_display == 0) {
-                if (generation_flag) {
+                if (details) {
                     System.out.println("Generation " + generation + ", Best Fitness: " + population.get(0).fitness);
                 }
             }
         }
 
-        // If all the generations finishes without finding a solution within 2 minutes
-        //throw new RuntimeException("Genetic Algorithm failed to find a solution within 2 minutes.");
+        if (details) {
+            System.out.println("Maximum Generation reaches. Best Fitness: " + population.get(0).fitness);
+            System.out.println("Solution has " + population.get(0).fitness + " errors");
+            printBoard(population.get(0).board);
+        }
 
         return population.get(0).board;
     }
@@ -483,9 +508,10 @@ public class SimpleGenetic implements SudokuSolver {
     // Helper Method 9: printGAConfig(int POPULATION_SIZE, double MUTATION_RATE, int
     // MAX_GENERATIONS)
     public static void printGAConfig(int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS) {
-        System.out.println("\nPopulation size: " + POPULATION_SIZE);
+        System.out.println("\nGenetic Algorithm configurations: ");
+        System.out.println("Population size: " + POPULATION_SIZE);
         System.out.println("Mutation rate: " + MUTATION_RATE);
-        System.out.println("Maximum generations: " + MAX_GENERATIONS);
+        System.out.println("Maximum generations: " + MAX_GENERATIONS + " \n");
     }
 
     // Helper Method 10: isValidBoard(int[][] board)
@@ -537,6 +563,17 @@ public class SimpleGenetic implements SudokuSolver {
 
         return true;
     }
-
     
+    // Helper Method 11: SolveDetails(int[][] puzzle, boolean details)
+    // Solve but also print details of algorithm operation
+    public int[][] SolveDetails(int[][] puzzle, boolean details) {
+        // Throw Exception to catch error of input puzzle
+        if (!isValidBoard(puzzle)) {
+            throw new IllegalArgumentException("Invalid puzzle board input.");
+        }
+
+        long startTime = System.currentTimeMillis();
+        return Genetic(puzzle, startTime, details);
+    }
+
 }
