@@ -1,60 +1,10 @@
 package algorithms;
 
 import java.util.Random;
-
 import structures.List;
 import structures.ArrayList;
 
-import utils.SudokuIOHandling;
-import utils.SudokuTestUtils;
-
 public class SimpleGenetic implements SudokuSolver {
-
-    // ------------------------------------------------------------------------------------------------
-    // Main code
-    public static void main(String[] args) {
-
-        String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
-        String basePath = "sudoku-solver/puzzles/";
-
-        for (String difficulty : difficulties) {
-            String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = SudokuIOHandling.loadSudokuBoards(puzzleFile);
-
-            if (puzzles == null) {
-                System.out.println("Error loading " + difficulty + " puzzles");
-                continue;
-            }
-
-            System.out.println("\nTesting difficulty: " + difficulty);
-
-            SudokuSolver SimpleGenetic = new SimpleGenetic(100, 0.2,
-                    10, "Merge Sort");
-
-            SudokuTestUtils.testSolver(SimpleGenetic, puzzles, difficulty, true);
-        }
-
-        // Additional: Solve single puzzle in details to show algorithm's operation
-        int[][] puzzle = {
-                { 5, 3, 0, 0, 7, 0, 0, 0, 0 },
-                { 6, 0, 0, 1, 9, 5, 0, 0, 0 },
-                { 0, 9, 8, 0, 0, 0, 0, 6, 0 },
-                { 8, 0, 0, 0, 6, 0, 0, 0, 3 },
-                { 4, 0, 0, 8, 0, 3, 0, 0, 1 },
-                { 7, 0, 0, 0, 2, 0, 0, 0, 6 },
-                { 0, 6, 0, 0, 0, 0, 2, 8, 0 },
-                { 0, 0, 0, 4, 1, 9, 0, 0, 5 },
-                { 0, 0, 0, 0, 8, 0, 0, 7, 9 }
-        };
-        System.out.println("\nDetails of Algorithms:");
-        System.out.println("Initial puzzle: ");
-        printBoard(puzzle);
-        SimpleGenetic SimpleGeneticDetails = new SimpleGenetic(1000, 0.2,
-                10, "Merge Sort");
-        SimpleGeneticDetails.SolveDetails(puzzle, true);
-
-    }
-
     // ------------------------------------------------------------------------------------------------
     // Supporting properties
     private static final int generation_display = 1;
