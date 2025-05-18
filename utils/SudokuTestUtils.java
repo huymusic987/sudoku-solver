@@ -5,15 +5,15 @@ import structures.ArrayList;
 import structures.List;
 
 public class SudokuTestUtils {
-    public static void testSolver(SudokuSolver solver, List<int[][]> boards, String difficulty,
+    public static void testSolver(SudokuSolver solver, List<int[][]> puzzles, String difficulty,
             boolean printErrorDetails) {
         int correctCount = 0;
         long totalTime = 0;
-        int puzzleCount = boards.size();
+        int puzzleCount = puzzles.size();
         boolean hasException = false;
 
         for (int i = 0; i < puzzleCount; i++) {
-            int[][] puzzle = copy(boards.get(i));
+            int[][] puzzle = copy(puzzles.get(i));
             try {
                 long startTime = System.nanoTime();
                 int[][] solved = solver.solve(puzzle);
@@ -47,7 +47,7 @@ public class SudokuTestUtils {
         System.out.println("Sudoku Board:");
         for (int i = 0; i < 9; i++) {
             if (i % 3 == 0 && i != 0) {
-                System.out.println("- - - + - - - + - - -");
+                System.out.println("---------------------");
             }
             for (int j = 0; j < 9; j++) {
                 if (j % 3 == 0 && j != 0) {
