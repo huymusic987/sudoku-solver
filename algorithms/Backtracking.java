@@ -6,16 +6,16 @@ public class Backtracking implements SudokuSolver {
     private int stepCount = 0;
 
     @Override
-    public int[][] solve(int[][] puzzle) {
-        if (!isValidBoard(puzzle)) {
+    public int[][] solve(int[][] board) {
+        if (!isValidBoard(board)) {
             throw new IllegalArgumentException("Invalid puzzle board input.");
         }
 
         long startTime = System.currentTimeMillis();
         stepCount = 0;
 
-        if (BacktrackingRecursive(puzzle, startTime)) {
-            return puzzle;
+        if (BacktrackingRecursive(board, startTime)) {
+            return board;
         } else {
             throw new RuntimeException("Backtracking failed to solve the puzzle.");
         }

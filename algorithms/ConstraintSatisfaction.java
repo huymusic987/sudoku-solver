@@ -1,71 +1,37 @@
 package algorithms;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import structures.ArrayList;
 import structures.List;
-import utils.SudokuIOHandling;
-import utils.SudokuTestUtils;
 
 public class ConstraintSatisfaction implements SudokuSolver {
-    public static void main(String[] args) {
-        String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
-        String basePath = "sudoku-solver/puzzles/";
-
-        for (String difficulty : difficulties) {
-            String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
-
-            if (puzzles == null) {
-                System.out.println("Error loading " + difficulty + " puzzles");
-                continue;
-            }
-
-            System.out.println("\nTesting difficulty: " + difficulty);
-
-            ConstraintSatisfaction csp = new ConstraintSatisfaction();
-
-            SudokuTestUtils.testSolver(csp, puzzles, difficulty, true);
-        }
-    }
-
     private static final int GRID_SIZE = 9;
 
     // Funtion called sudoku solver return solved board or
     // return null whenever it exceed 2 minutes or an error is occured
     @Override
     public int[][] solve(int[][] board) {
-
-        ExecutorService executor = Executors.newSingleThreadScheduledExecutor();
-        Future<Boolean> future = executor.submit(() -> constraintSatisfaction(board));
-
-        try {
-            boolean solved = future.get(2, TimeUnit.MINUTES);
-            if (!isValidBoard(board)) {
-                throw new IllegalArgumentException("Invalid puzzle board input.");
-            }
-            if (isValidBoard(board) && solved) {
-                return board;
-            }
-        } catch (TimeoutException e) {
-            System.out.println("Solver runtime exceed 2 minutes.");
-        } catch (InterruptedException | ExecutionException e) {
-            System.out.println("An error occurred: " + e.getMessage());
-        } finally {
-            executor.shutdown();
+        if (!isValidBoard(board)) {
+            throw new IllegalArgumentException("Invalid puzzle board input.");
         }
-        return null;
+
+        long startTime = System.currentTimeMillis();
+
+        if (constraintSatisfaction(board, startTime)) {
+            return board;
+        } else {
+            throw new RuntimeException("Constraint Satisfaction failed to solve the puzzle.");
+        }
     }
 
     // Average Time Complexity: O(n^k)
     // n is the number of unassigned cells
     // k is the number of possible values for each cell
     // Worst Case: O(9^81)
-    public static boolean constraintSatisfaction(int[][] board) {
+    public static boolean constraintSatisfaction(int[][] board, long startTime) {
+        if (System.currentTimeMillis() - startTime > 120000) {
+            throw new RuntimeException("Constraint Satisfaction exceeded time limit of 2 minutes");
+        }
+
         // Find the most constrained cell (cell with the fewest possible values)
         int[] cell = findMostConstrainedCell(board);
         if (cell == null) {
@@ -80,7 +46,7 @@ public class ConstraintSatisfaction implements SudokuSolver {
         for (int i = 0; i < possibleValues.size(); i++) {
             int value = possibleValues.get(i);
             board[row][col] = value;
-            if (constraintSatisfaction(board)) {
+            if (constraintSatisfaction(board, startTime)) {
                 return true;
             }
             board[row][col] = 0;
@@ -156,54 +122,64 @@ public class ConstraintSatisfaction implements SudokuSolver {
         return possibleValues;
     }
 
+    // AI prompt: write a java function named isValidBoard that check
+    // if a 2D array sudoku board input is corrected without duplicated values
+    // and satisfied sudoku rules
     @Override
     public boolean isValidBoard(int[][] board) {
-        // Check if the board is filled
-        for (int row = 0; row < GRID_SIZE; row++) {
-            for (int col = 0; col < GRID_SIZE; col++) {
-                if (board[row][col] == 0) {
-                    return false;
+        int n = 9;
+        // Check rows and columns
+        for (int i = 0; i < n; i++) {
+            boolean[] rowUsed = new boolean[n + 1];
+            boolean[] colUsed = new boolean[n + 1];
+            for (int j = 0; j < n; j++) {
+                int rowVal = board[i][j];
+                int colVal = board[j][i];
+                if (rowVal != 0) {
+                    if (rowUsed[rowVal])
+                        return false;
+                    rowUsed[rowVal] = true;
+                }
+                if (colVal != 0) {
+                    if (colUsed[colVal])
+                        return false;
+                    colUsed[colVal] = true;
                 }
             }
         }
-
-        // Check row constraint
-        for (int row = 0; row < GRID_SIZE; row++) {
-            boolean[] used = new boolean[GRID_SIZE + 1];
-            for (int col = 0; col < GRID_SIZE; col++) {
-                int num = board[row][col];
-                if (used[num])
-                    return false;
-                used[num] = true;
-            }
-        }
-
-        // Check column constraint
-        for (int col = 0; col < GRID_SIZE; col++) {
-            boolean[] used = new boolean[GRID_SIZE + 1];
-            for (int row = 0; row < GRID_SIZE; row++) {
-                int num = board[row][col];
-                if (used[num])
-                    return false;
-                used[num] = true;
-            }
-        }
-
-        // Check 3x3 subgrid constraint
+        // Check 3x3 subgrids
         for (int boxRow = 0; boxRow < 3; boxRow++) {
             for (int boxCol = 0; boxCol < 3; boxCol++) {
-                boolean[] used = new boolean[GRID_SIZE + 1];
-                for (int row = boxRow * 3; row < boxRow * 3 + 3; row++) {
-                    for (int col = boxCol * 3; col < boxCol * 3 + 3; col++) {
-                        int num = board[row][col];
-                        if (used[num])
-                            return false;
-                        used[num] = true;
+                boolean[] boxUsed = new boolean[n + 1];
+                for (int i = 0; i < 3; i++) {
+                    for (int j = 0; j < 3; j++) {
+                        int val = board[boxRow * 3 + i][boxCol * 3 + j];
+                        if (val != 0) {
+                            if (boxUsed[val])
+                                return false;
+                            boxUsed[val] = true;
+                        }
                     }
                 }
             }
         }
-
         return true;
+    }
+
+    public void printBoard(int[][] board) {
+        System.out.println("Sudoku Board:");
+        for (int i = 0; i < 9; i++) {
+            if (i % 3 == 0 && i != 0) {
+                System.out.println("- - - + - - - + - - -");
+            }
+            for (int j = 0; j < 9; j++) {
+                if (j % 3 == 0 && j != 0) {
+                    System.out.print("| ");
+                }
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
