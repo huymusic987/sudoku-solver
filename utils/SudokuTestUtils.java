@@ -5,14 +5,15 @@ import structures.ArrayList;
 import structures.List;
 
 public class SudokuTestUtils {
-    public static void testSolver(SudokuSolver solver, List<int[][]> puzzles, String difficulty, boolean printDetails) {
+    public static void testSolver(SudokuSolver solver, List<int[][]> boards, String difficulty,
+            boolean printErrorDetails) {
         int correctCount = 0;
         long totalTime = 0;
-        int puzzleCount = puzzles.size();
+        int puzzleCount = boards.size();
         boolean hasException = false;
 
         for (int i = 0; i < puzzleCount; i++) {
-            int[][] puzzle = copy(puzzles.get(i));
+            int[][] puzzle = copy(boards.get(i));
             try {
                 long startTime = System.nanoTime();
                 int[][] solved = solver.solve(puzzle);
@@ -21,14 +22,14 @@ public class SudokuTestUtils {
 
                 if (solved != null && solver.isValidBoard(solved)) {
                     correctCount++;
-                } else if (solved != null && printDetails) {
+                } else if (solved != null && printErrorDetails) {
                     System.out.printf("%s produced an invalid board for %s puzzle #%d:%n",
                             solver.getClass().getSimpleName(), difficulty, i + 1);
                     printBoard(solved);
                     reportBoardErrors(solved);
                 }
             } catch (RuntimeException e) {
-                System.out.printf("%s error message on %s puzzle #%d: %s%n",
+                System.out.printf("%s algorithm error message on %s puzzle #%d: %s%n",
                         solver.getClass().getSimpleName(), difficulty, i + 1, e.getMessage());
                 hasException = true;
             }
@@ -130,12 +131,12 @@ public class SudokuTestUtils {
     }
 
     public static int[][] copy(int[][] original) {
-        int[][] copy = new int[9][9];
+        int[][] copyboard = new int[9][9];
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                copy[i][j] = original[i][j];
+                copyboard[i][j] = original[i][j];
             }
         }
-        return copy;
+        return copyboard;
     }
 }

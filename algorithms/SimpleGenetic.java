@@ -19,7 +19,7 @@ public class SimpleGenetic implements SudokuSolver {
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
+            List<int[][]> puzzles = SudokuIOHandling.loadSudokuBoards(puzzleFile);
 
             if (puzzles == null) {
                 System.out.println("Error loading " + difficulty + " puzzles");
@@ -28,29 +28,29 @@ public class SimpleGenetic implements SudokuSolver {
 
             System.out.println("\nTesting difficulty: " + difficulty);
 
-            SudokuSolver SimpleGenetic = new SimpleGenetic(100, 0.2, 
-                                                            10, "Merge Sort");
-                                                            
+            SudokuSolver SimpleGenetic = new SimpleGenetic(100, 0.2,
+                    10, "Merge Sort");
+
             SudokuTestUtils.testSolver(SimpleGenetic, puzzles, difficulty, true);
         }
 
         // Additional: Solve single puzzle in details to show algorithm's operation
         int[][] puzzle = {
-            {5, 3, 0, 0, 7, 0, 0, 0, 0},
-            {6, 0, 0, 1, 9, 5, 0, 0, 0},
-            {0, 9, 8, 0, 0, 0, 0, 6, 0},
-            {8, 0, 0, 0, 6, 0, 0, 0, 3},
-            {4, 0, 0, 8, 0, 3, 0, 0, 1},
-            {7, 0, 0, 0, 2, 0, 0, 0, 6},
-            {0, 6, 0, 0, 0, 0, 2, 8, 0},
-            {0, 0, 0, 4, 1, 9, 0, 0, 5},
-            {0, 0, 0, 0, 8, 0, 0, 7, 9}
+                { 5, 3, 0, 0, 7, 0, 0, 0, 0 },
+                { 6, 0, 0, 1, 9, 5, 0, 0, 0 },
+                { 0, 9, 8, 0, 0, 0, 0, 6, 0 },
+                { 8, 0, 0, 0, 6, 0, 0, 0, 3 },
+                { 4, 0, 0, 8, 0, 3, 0, 0, 1 },
+                { 7, 0, 0, 0, 2, 0, 0, 0, 6 },
+                { 0, 6, 0, 0, 0, 0, 2, 8, 0 },
+                { 0, 0, 0, 4, 1, 9, 0, 0, 5 },
+                { 0, 0, 0, 0, 8, 0, 0, 7, 9 }
         };
         System.out.println("\nDetails of Algorithms:");
         System.out.println("Initial puzzle: ");
         printBoard(puzzle);
-        SimpleGenetic SimpleGeneticDetails = new SimpleGenetic(1000, 0.2, 
-                                                            10, "Merge Sort");
+        SimpleGenetic SimpleGeneticDetails = new SimpleGenetic(1000, 0.2,
+                10, "Merge Sort");
         SimpleGeneticDetails.SolveDetails(puzzle, true);
 
     }
@@ -77,7 +77,8 @@ public class SimpleGenetic implements SudokuSolver {
 
     // ------------------------------------------------------------------------------------------------
     // Data Structure: Individual class
-    // Consist of 2 properties: 2D Integer Array dtype - Sudoku board and Integer Fitness
+    // Consist of 2 properties: 2D Integer Array dtype - Sudoku board and Integer
+    // Fitness
     private static class Individual {
         int[][] board;
         int fitness;
@@ -119,7 +120,7 @@ public class SimpleGenetic implements SudokuSolver {
         return Genetic(puzzle, startTime, false);
     }
 
-    // Support Method 1: Genetic(int[][] board, long startTime) 
+    // Support Method 1: Genetic(int[][] board, long startTime)
     public int[][] Genetic(int[][] puzzle, long startTime, boolean details) {
         List<Individual> population = initializePopulation(puzzle);
 
@@ -141,7 +142,7 @@ public class SimpleGenetic implements SudokuSolver {
                     System.out.println("Solution found at generation: " + generation + " \n");
                     printBoard(population.get(0).board);
                 }
-                
+
                 return population.get(0).board;
             }
 
@@ -515,7 +516,7 @@ public class SimpleGenetic implements SudokuSolver {
     }
 
     // Helper Method 10: isValidBoard(int[][] board)
-    // Check if the board is valid 
+    // Check if the board is valid
     @Override
     public boolean isValidBoard(int[][] board) {
         // Check rows
@@ -563,7 +564,7 @@ public class SimpleGenetic implements SudokuSolver {
 
         return true;
     }
-    
+
     // Helper Method 11: SolveDetails(int[][] puzzle, boolean details)
     // Solve but also print details of algorithm operation
     public int[][] SolveDetails(int[][] puzzle, boolean details) {

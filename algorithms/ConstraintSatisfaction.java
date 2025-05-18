@@ -18,7 +18,7 @@ public class ConstraintSatisfaction implements SudokuSolver {
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
+            List<int[][]> puzzles = SudokuIOHandling.loadSudokuBoards(puzzleFile);
 
             if (puzzles == null) {
                 System.out.println("Error loading " + difficulty + " puzzles");
@@ -45,6 +45,9 @@ public class ConstraintSatisfaction implements SudokuSolver {
 
         try {
             boolean solved = future.get(2, TimeUnit.MINUTES);
+            if (!isValidBoard(board)) {
+                throw new IllegalArgumentException("Invalid puzzle board input.");
+            }
             if (isValidBoard(board) && solved) {
                 return board;
             }

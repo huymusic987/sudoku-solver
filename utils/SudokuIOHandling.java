@@ -8,7 +8,7 @@ import structures.ArrayList;
 import structures.List;
 
 public class SudokuIOHandling {
-    public static List<int[][]> loadSudokuPuzzles(String filename) {
+    public static List<int[][]> loadSudokuBoards(String filename) {
         List<int[][]> boards = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;
