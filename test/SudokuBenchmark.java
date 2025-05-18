@@ -14,7 +14,7 @@ public class SudokuBenchmark {
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
-            List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
+            List<int[][]> puzzles = SudokuIOHandling.loadSudokuBoards(puzzleFile);
 
             if (puzzles == null) {
                 System.out.println("Error loading " + difficulty + " puzzles");
