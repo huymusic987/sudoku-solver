@@ -11,7 +11,7 @@ import utils.SudokuTestUtils;
 public class SudokuBenchmark {
     public static void main(String[] args) {
         String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
-        String basePath = "sudoku-solver/puzzles/";
+        String basePath = "puzzles/";
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
