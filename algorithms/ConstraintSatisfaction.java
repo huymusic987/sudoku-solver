@@ -23,7 +23,7 @@ public class ConstraintSatisfaction implements RMIT_Sudoku_Solver {
         }
     }
 
-    // Average Time Complexity: O(n^k)
+    // Average Time Complexity: O(k^n)
     // n is the number of unassigned cells
     // k is the number of possible values for each cell
     // Worst Case: O(9^81)
