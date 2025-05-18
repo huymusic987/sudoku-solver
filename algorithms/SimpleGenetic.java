@@ -2,13 +2,45 @@ package algorithms;
 
 import java.util.Random;
 
-public class SimpleGenetic {
+import structures.List;
+import structures.ArrayList;
+
+import utils.SudokuIOHandling;
+import utils.SudokuTestUtils;
+
+public class SimpleGenetic implements SudokuSolver {
+
+    // ------------------------------------------------------------------------------------------------
+    // Main code
+    public static void main(String[] args) {
+
+        String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
+        String basePath = "SudokuTest/";
+
+        for (String difficulty : difficulties) {
+            String puzzleFile = basePath + difficulty + "_puzzles.txt";
+            List<int[][]> puzzles = SudokuIOHandling.loadSudokuPuzzles(puzzleFile);
+
+            if (puzzles == null) {
+                System.out.println("Error loading " + difficulty + " puzzles");
+                continue;
+            }
+
+            System.out.println("\nTesting difficulty: " + difficulty);
+
+            SudokuSolver SimpleGenetic = new SimpleGenetic(100, 0.2, 
+                                                            10, "Merge Sort");
+
+            SudokuTestUtils.testSolver(SimpleGenetic, puzzles, difficulty, true);
+        }
+
+    }
 
     // ------------------------------------------------------------------------------------------------
     // Supporting properties
     private static final int generation_display = 1;
     private static final boolean generation_flag = false;
-    private static final boolean merge_sort = true;
+    String sort = "Merge Sort"; // Choose sorting algorithms
 
     // Sudoku board-type properties
     // Should be constant throughout the whole program
@@ -20,32 +52,14 @@ public class SimpleGenetic {
     // The Complexity of this Genetic Algorithm is defined by 2 key manually-tunable
     // parameters
     // Which are POPULATION_SIZE and MAX_GENERATIONS
-    // Lets call their size are the notations P, M and G, respectively
+    // Let's call their size are the notations P, M and G, respectively
     int POPULATION_SIZE = 0; // Number of solving candidates in 1 generation
     double MUTATION_RATE = 0.0; // Lower mutation for easy puzzles
     int MAX_GENERATIONS = 0; // Fewer generations needed for easy puzzles
 
     // ------------------------------------------------------------------------------------------------
-    // Data Structure 1: 2D Integer Array
-    // Main data structure representing the Sudoku board elements, 1st & 2nd
-    // dimension is row & column
-    // The shape of main Sudoku board is of shape (GRID_SIZE, GRIZ_SIZE) where
-    // GRID_SIZE is fixed dim value
-    // The shape of 9 subgrids within Sudoku board is of shape (SUBGRID_SIZE,
-    // SUBGRID_SIZE)
-    // Accessing each element in the Sudoku board by accessing its index in 1st and
-    // 2nd axis of the tensor
-    // E.g.: Retrieve tensor[2][3] will access element at row 2, column 3 of 2D
-    // tensor of shape (9, 9)
-
-    // ------------------------------------------------------------------------------------------------
-    // Data Structure 2: Individual class
-    // Consist of 2 properties: 2D Integer Array dtype - Sudoku board and Integer
-    // dtype - Fitness calculation
-    // Representing single Sudoku solver with appropriate solved element filled into
-    // the initial board
-    // Fitness is added to indicate the potential colision number of error in the
-    // solving Sudoku board
+    // Data Structure: Individual class
+    // Consist of 2 properties: 2D Integer Array dtype - Sudoku board and Integer Fitness
     private static class Individual {
         int[][] board;
         int fitness;
@@ -55,19 +69,15 @@ public class SimpleGenetic {
             this.fitness = calculateFitness(this.board);
         }
     }
-    // --------------------------------------------------------------------------------------
-    // Data Structure 3: List<Individual>
-    // List data structure where elements are of dtype Individual, declared from
-    // Individual class
-    // Access the Individual dtype object and its properties by Object.properties
 
     // ----------------------------------------------------------------------------------------
     // Constructor - accepting 3 parameters to declare the SimpleGeneticSudokuSolver
     // object
-    public SimpleGenetic(int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS) {
+    public SimpleGenetic(int POPULATION_SIZE, double MUTATION_RATE, int MAX_GENERATIONS, String sort) {
         this.POPULATION_SIZE = POPULATION_SIZE;
         this.MUTATION_RATE = MUTATION_RATE;
         this.MAX_GENERATIONS = MAX_GENERATIONS;
+        this.sort = sort;
     }
 
     // --------------------------------------------------------------------
@@ -79,16 +89,28 @@ public class SimpleGenetic {
     // Space Complexity: O(P)
     // Main method of the program: Accept 2D Integer Array Sudoku Puzzle -> Solve it
     // -> Return the solution
+    @Override
     public int[][] solve(int[][] puzzle) {
+        // Throw Exception to catch error of input puzzle
+        if (!isValidBoard(puzzle)) {
+            throw new IllegalArgumentException("Invalid puzzle board input.");
+        }
+
+        long startTime = System.currentTimeMillis();
+        return Genetic(puzzle, startTime);
+    }
+
+    // Support Method 1: Genetic(int[][] board, long startTime) 
+    public int[][] Genetic(int[][] puzzle, long startTime) {
         List<Individual> population = initializePopulation(puzzle);
 
-        // printGAConfig(POPULATION_SIZE, MUTATION_RATE, MAX_GENERATIONS);
-        // if(merge_sort) {System.out.println("Implement Merge Sort Algorithm for the
-        // fitness in population list");}
-        // else {System.out.println("Implement Bubble Sort Algorithm for the fitness in
-        // population list");}
         for (int generation = 0; generation < MAX_GENERATIONS; generation++) {
-            if (merge_sort) {
+            // Raise exception for program timeout
+            if (System.currentTimeMillis() - startTime > 120000) {
+                throw new RuntimeException("Genetic Algorithm exceeded time limit of 2 minutes");
+            }
+
+            if (sort == "Merge Sort") {
                 MergeSortPopulation(population);
             } // Use scratch sort
             else {
@@ -96,8 +118,8 @@ public class SimpleGenetic {
             }
 
             if (population.get(0).fitness == 0) {
-                // System.out.println("Solution found at generation: " + generation + " \n");
-                // printBoard(population.get(0).board);
+                //System.out.println("Solution found at generation: " + generation + " \n");
+                //printBoard(population.get(0).board);
                 return population.get(0).board;
             }
 
@@ -123,11 +145,9 @@ public class SimpleGenetic {
             }
         }
 
-        // System.out.println("Generation number: " + MAX_GENERATIONS);
-        // System.out.println("Population size: " + POPULATION_SIZE);
-        // System.out.println("Mutation rate: " + MUTATION_RATE);
-        // System.out.println("Maximum generations reached. Best fitness: " +
-        // population.get(0).fitness);
+        // If all the generations finishes without finding a solution within 2 minutes
+        //throw new RuntimeException("Genetic Algorithm failed to find a solution within 2 minutes.");
+
         return population.get(0).board;
     }
 
@@ -468,28 +488,55 @@ public class SimpleGenetic {
         System.out.println("Maximum generations: " + MAX_GENERATIONS);
     }
 
-    // ------------------------------------------------------------------------------------------------
-    // Main code
-    public static void main(String[] args) {
+    // Helper Method 10: isValidBoard(int[][] board)
+    // Check if the board is valid 
+    @Override
+    public boolean isValidBoard(int[][] board) {
+        // Check rows
+        for (int row = 0; row < 9; row++) {
+            boolean[] seen = new boolean[10];
+            for (int col = 0; col < 9; col++) {
+                int val = board[row][col];
+                if (val != 0) {
+                    if (seen[val])
+                        return false;
+                    seen[val] = true;
+                }
+            }
+        }
 
-        SimpleGenetic RMIT_Genetic_Sudoku_Solver = new SimpleGenetic(300,
-                0.2, 20);
-        int[][] puzzle = {
-                { 0, 1, 0, 0, 0, 9, 5, 6, 4 },
-                { 8, 7, 9, 0, 0, 0, 0, 0, 0 },
-                { 0, 0, 0, 1, 2, 3, 0, 0, 0 },
-                { 0, 5, 1, 0, 7, 8, 0, 0, 0 },
-                { 4, 6, 0, 0, 0, 1, 0, 8, 9 },
-                { 7, 0, 8, 0, 0, 0, 3, 1, 5 },
-                { 6, 0, 0, 2, 0, 4, 9, 0, 0 },
-                { 1, 0, 4, 8, 0, 0, 0, 0, 3 },
-                { 0, 8, 7, 3, 6, 0, 1, 4, 0 }
-        };
-        System.out.println("Initial puzzle: \n");
-        printBoard(puzzle);
-        RMIT_Genetic_Sudoku_Solver.solve(puzzle);
-        System.out.println("\nSolved puzzle: \n");
-        printBoard(RMIT_Genetic_Sudoku_Solver.solve(puzzle));
+        // Check columns
+        for (int col = 0; col < 9; col++) {
+            boolean[] seen = new boolean[10];
+            for (int row = 0; row < 9; row++) {
+                int val = board[row][col];
+                if (val != 0) {
+                    if (seen[val])
+                        return false;
+                    seen[val] = true;
+                }
+            }
+        }
 
+        // Check 3x3 boxes
+        for (int boxRow = 0; boxRow < 9; boxRow += 3) {
+            for (int boxCol = 0; boxCol < 9; boxCol += 3) {
+                boolean[] seen = new boolean[10];
+                for (int i = boxRow; i < boxRow + 3; i++) {
+                    for (int j = boxCol; j < boxCol + 3; j++) {
+                        int val = board[i][j];
+                        if (val != 0) {
+                            if (seen[val])
+                                return false;
+                            seen[val] = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return true;
     }
+
+    
 }
