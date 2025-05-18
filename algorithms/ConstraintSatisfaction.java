@@ -6,16 +6,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import structures.List;
 import structures.ArrayList;
+import structures.List;
 import utils.SudokuIOHandling;
 import utils.SudokuTestUtils;
 
 public class ConstraintSatisfaction implements SudokuSolver {
     public static void main(String[] args) {
         String[] difficulties = { "easy", "medium", "hard", "very_hard", "unsolvable" };
-        String basePath = "SudokuTest/";
+        String basePath = "puzzles/";
 
         for (String difficulty : difficulties) {
             String puzzleFile = basePath + difficulty + "_puzzles.txt";
