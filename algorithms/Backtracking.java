@@ -1,8 +1,7 @@
 package algorithms;
 
-import utils.SudokuTestUtils;
-
 public class Backtracking implements SudokuSolver {
+    private boolean enableDetailedLogs = false;
     private int stepCount = 0;
 
     @Override
@@ -60,17 +59,22 @@ public class Backtracking implements SudokuSolver {
                 if (puzzle[row][column] == 0) {
                     for (int numberToTry = 1; numberToTry <= 9; numberToTry++) {
                         if (isValidNumber(puzzle, numberToTry, row, column)) {
-                            System.out.printf("Step %d: Trying number %d at (%d, %d)%n",
-                                    stepCount, numberToTry, row, column);
                             puzzle[row][column] = numberToTry;
-                            stepCount++;
-                            SudokuTestUtils.printBoard(puzzle);
+                            if (enableDetailedLogs) {
+                                System.out.printf("Step %d: Trying number %d at (%d, %d)%n",
+                                        stepCount, numberToTry, row, column);
+                                stepCount++;
+                                printBoard(puzzle);
+                            }
                             if (BacktrackingRecursive(puzzle, startTime)) {
                                 return true;
                             } else {
-                                System.out.printf("Step %d: Backtracking at (%d, %d)%n",
-                                        stepCount, row + 1, column + 1);
                                 puzzle[row][column] = 0;
+                                if (enableDetailedLogs) {
+                                    System.out.printf("Step %d: Backtracking at (%d, %d)%n",
+                                            stepCount, row, column);
+                                    printBoard(puzzle);
+                                }
                             }
                         }
                     }
@@ -118,5 +122,22 @@ public class Backtracking implements SudokuSolver {
         }
 
         return true; // all checks passed
+    }
+
+    public static void printBoard(int[][] board) {
+        System.out.println("Sudoku Board:");
+        for (int i = 0; i < 9; i++) {
+            if (i % 3 == 0 && i != 0) {
+                System.out.println("---------------------");
+            }
+            for (int j = 0; j < 9; j++) {
+                if (j % 3 == 0 && j != 0) {
+                    System.out.print("| ");
+                }
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
