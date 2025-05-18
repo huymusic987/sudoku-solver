@@ -8,7 +8,13 @@ import structures.ArrayList;
 import structures.List;
 
 public class SudokuIOHandling {
-    public static List<int[][]> loadSudokuBoards(String filename) {
+    // AI Prompt: Write a Java method loadSudokuPuzzles(String filename) that reads
+    // multiple 9×9 Sudoku boards from a file. Boards are separated by blank lines.
+    // Each line has 9 space-separated numbers (0–9). Return the boards in the form
+    // of List<int[][]>.
+    // Validate format and values. On error, print a message and return null.
+
+    public static List<int[][]> loadSudokuPuzzles(String filename) {
         List<int[][]> boards = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
             String line;

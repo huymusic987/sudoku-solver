@@ -122,9 +122,9 @@ public class ConstraintSatisfaction implements SudokuSolver {
         return possibleValues;
     }
 
-    //AI prompt: write a java function named isValidBoard that check 
-    //if a 2D array sudoku board input is corrected without duplicated values
-    //and satisfied sudoku rules
+    // AI prompt: write a java function named isValidBoard that check
+    // if a 2D array sudoku board input is corrected without duplicated values
+    // and satisfied sudoku rules
     @Override
     public boolean isValidBoard(int[][] board) {
         int n = 9;
@@ -136,11 +136,13 @@ public class ConstraintSatisfaction implements SudokuSolver {
                 int rowVal = board[i][j];
                 int colVal = board[j][i];
                 if (rowVal != 0) {
-                    if (rowUsed[rowVal]) return false;
+                    if (rowUsed[rowVal])
+                        return false;
                     rowUsed[rowVal] = true;
                 }
                 if (colVal != 0) {
-                    if (colUsed[colVal]) return false;
+                    if (colUsed[colVal])
+                        return false;
                     colUsed[colVal] = true;
                 }
             }
@@ -153,7 +155,8 @@ public class ConstraintSatisfaction implements SudokuSolver {
                     for (int j = 0; j < 3; j++) {
                         int val = board[boxRow * 3 + i][boxCol * 3 + j];
                         if (val != 0) {
-                            if (boxUsed[val]) return false;
+                            if (boxUsed[val])
+                                return false;
                             boxUsed[val] = true;
                         }
                     }

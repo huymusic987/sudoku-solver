@@ -1,6 +1,9 @@
 package algorithms;
 
 public class Backtracking implements SudokuSolver {
+    private boolean enableDetailedLogs = false;
+    private int stepCount = 0;
+
     @Override
     public int[][] solve(int[][] board) {
         if (!isValidBoard(board)) {
@@ -8,6 +11,7 @@ public class Backtracking implements SudokuSolver {
         }
 
         long startTime = System.currentTimeMillis();
+        stepCount = 0;
 
         if (BacktrackingRecursive(board, startTime)) {
             return board;
@@ -16,17 +20,17 @@ public class Backtracking implements SudokuSolver {
         }
     }
 
-    private boolean isValidNumber(int[][] board, int number, int row, int column) {
+    private boolean isValidNumber(int[][] puzzle, int number, int row, int column) {
         // Check row
         for (int i = 0; i < 9; i++) {
-            if (board[row][i] == number) {
+            if (puzzle[row][i] == number) {
                 return false;
             }
         }
 
         // Check column
         for (int i = 0; i < 9; i++) {
-            if (board[i][column] == number) {
+            if (puzzle[i][column] == number) {
                 return false;
             }
         }
@@ -36,7 +40,7 @@ public class Backtracking implements SudokuSolver {
         int startCol = column - column % 3;
         for (int i = startRow; i < startRow + 3; i++) {
             for (int j = startCol; j < startCol + 3; j++) {
-                if (board[i][j] == number) {
+                if (puzzle[i][j] == number) {
                     return false;
                 }
             }
@@ -45,21 +49,32 @@ public class Backtracking implements SudokuSolver {
         return true;
     }
 
-    private boolean BacktrackingRecursive(int[][] board, long startTime) {
+    private boolean BacktrackingRecursive(int[][] puzzle, long startTime) {
         if (System.currentTimeMillis() - startTime > 120000) {
             throw new RuntimeException("Backtracking exceeded time limit of 2 minutes");
         }
 
         for (int row = 0; row < 9; row++) {
             for (int column = 0; column < 9; column++) {
-                if (board[row][column] == 0) {
+                if (puzzle[row][column] == 0) {
                     for (int numberToTry = 1; numberToTry <= 9; numberToTry++) {
-                        if (isValidNumber(board, numberToTry, row, column)) {
-                            board[row][column] = numberToTry;
-                            if (BacktrackingRecursive(board, startTime)) {
+                        if (isValidNumber(puzzle, numberToTry, row, column)) {
+                            puzzle[row][column] = numberToTry;
+                            if (enableDetailedLogs) {
+                                System.out.printf("Step %d: Trying number %d at (%d, %d)%n",
+                                        stepCount, numberToTry, row, column);
+                                stepCount++;
+                                printBoard(puzzle);
+                            }
+                            if (BacktrackingRecursive(puzzle, startTime)) {
                                 return true;
                             } else {
-                                board[row][column] = 0;
+                                puzzle[row][column] = 0;
+                                if (enableDetailedLogs) {
+                                    System.out.printf("Step %d: Backtracking at (%d, %d)%n",
+                                            stepCount, row, column);
+                                    printBoard(puzzle);
+                                }
                             }
                         }
                     }
@@ -71,9 +86,10 @@ public class Backtracking implements SudokuSolver {
         return true;
     }
 
-    // AI Prompt: Write a function in java, called isValidBoard that accepts a 2D
-    // array which represents a sudoku board, validate the board whether it follow
-    // Sudoku rules or not and return a boolean. Avoid using nested loops
+    // AI Prompt: Write a Java method isValidBoard(int[][] board) that checks if a
+    // 9×9 Sudoku board is valid. Avoid using nested loops. Validate rows, columns,
+    // and 3×3 boxes using boolean arrays. Allow 0s for empty cells. Return true if
+    // valid, false otherwise.
     public boolean isValidBoard(int[][] board) {
         if (board.length != 9 || board[0].length != 9)
             return false;
@@ -106,5 +122,22 @@ public class Backtracking implements SudokuSolver {
         }
 
         return true; // all checks passed
+    }
+
+    public static void printBoard(int[][] board) {
+        System.out.println("Sudoku Board:");
+        for (int i = 0; i < 9; i++) {
+            if (i % 3 == 0 && i != 0) {
+                System.out.println("---------------------");
+            }
+            for (int j = 0; j < 9; j++) {
+                if (j % 3 == 0 && j != 0) {
+                    System.out.print("| ");
+                }
+                System.out.print(board[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
     }
 }
