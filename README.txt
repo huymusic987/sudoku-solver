@@ -3,7 +3,7 @@ Group Project - Sudoku Solver
 Documentation of Group 15
 
 1. Watch the presentation of the Sudoku Solver Group Project of Group 15:
-Link
+https://rmiteduau-my.sharepoint.com/:v:/g/personal/s3880200_rmit_edu_vn/ESj0JflUnvtIoSFezb0Dy9QBajPkLhTAoi1GSDFNhtbsaw?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJPbmVEcml2ZUZvckJ1c2luZXNzIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXciLCJyZWZlcnJhbFZpZXciOiJNeUZpbGVzTGlua0NvcHkifX0&e=edw0Ga
 
 2. Contribution Scores of members (Total 4 members * 5 points = 20 points)
 Member 1: Pham Quang Huy (s3940676) – Contribution Score: 5 points (25%)
