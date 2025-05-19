@@ -26,6 +26,7 @@ Responsibilities:
 - Describe supporting data structures, such as the domain lists and constraint matrices.
 - Perform complexity analysis of Constraint Satisfaction Algorithm, analyse the result and discussion on its run time.
 - Perform evaluation of correctness and efficiency by testing on multiple valid and unsolvable Sudoku boards.
+- Prepare different Sudoku puzzle difficulty levels in text file for testing purpose.
 
 Member 4: Le Quang Duy (s3880200) – Contribution Score: 5 points (25%)
 Responsibilities:
