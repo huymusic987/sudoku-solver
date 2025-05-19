@@ -55,7 +55,7 @@ public class SimpleGenetic implements RMIT_Sudoku_Solver {
     // ------------------------------------------------------------------------------------------------
     // Method 1: solve(int[][] puzzle)
     // Data Structure: 2D Integer Array
-    // Time Complexity: O(G * P(log(P)))
+    // Time Complexity: O(G * P(log(P))) for Merge Sort and O(G * P^2) for Bubble Sort
     // Space Complexity: O(P)
     // Main method of the program: Accept 2D Integer Array Sudoku Puzzle -> Solve it
     // -> Return the solution
@@ -71,6 +71,10 @@ public class SimpleGenetic implements RMIT_Sudoku_Solver {
     }
 
     // Support Method 1: Genetic(int[][] board, long startTime)
+    // Data Structure: 2D Integer Array
+    // Time Complexity: O(G * P(log(P))) for Merge Sort and O(G * P^2) for Bubble Sort
+    // Space Complexity: O(P)
+    // Perform full Simple Genetic algorithm on the Sudoku puzzle, also capture timeout 
     public int[][] Genetic(int[][] puzzle, long startTime, boolean details) {
         List<Individual> population = initializePopulation(puzzle);
 
@@ -130,7 +134,7 @@ public class SimpleGenetic implements RMIT_Sudoku_Solver {
     // ---------------------------------------------------------------------------
     // Support Method 1: BubbleSortPopulation(List<Individual> population)
     // Data Structure: void
-    // Time Complexity: O(N^2)
+    // Time Complexity: O(P^2)
     // Space Complexity: O(1)
     // Bubble Sort implmentation to sort a List<Inidividual> dtype base on the
     // Individual.fitness
@@ -155,8 +159,8 @@ public class SimpleGenetic implements RMIT_Sudoku_Solver {
     // ----------------------------------------------------------------------------------
     // Support Method 1: MergeSortPopulation(List<Inidividual> population)
     // Data Structure: void
-    // Time Complexity: O(N * log(N))
-    // Space Complexity: O(N)
+    // Time Complexity: O(P * log(P))
+    // Space Complexity: O(P)
     // Merge Sort Implementation to sort the List<Individual> population
     private void MergeSortPopulation(List<Individual> population) {
         if (population.size() > 1) {
