@@ -1,7 +1,7 @@
 package algorithms;
 
 public class Backtracking implements RMIT_Sudoku_Solver {
-    private boolean enableDetailedLogs = true;
+    private boolean enableDetailedLogs = false;
     private int stepCount = 0;
 
     @Override
