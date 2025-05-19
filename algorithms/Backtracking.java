@@ -1,6 +1,6 @@
 package algorithms;
 
-public class Backtracking implements SudokuSolver {
+public class Backtracking implements RMIT_Sudoku_Solver {
     private boolean enableDetailedLogs = true;
     private int stepCount = 0;
 
