@@ -27,6 +27,8 @@ public class ConstraintSatisfaction implements RMIT_Sudoku_Solver {
     // n is the number of unassigned cells
     // k is the number of possible values for each cell
     // Worst Case: O(9^81)
+    // Space Complexity: O(d)
+    //  d is the number of empty cell
     public static boolean constraintSatisfaction(int[][] board, long startTime) {
         if (System.currentTimeMillis() - startTime > 120000) {
             throw new RuntimeException("Constraint Satisfaction exceeded time limit of 2 minutes");
