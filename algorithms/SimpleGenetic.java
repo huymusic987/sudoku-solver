@@ -55,7 +55,7 @@ public class SimpleGenetic implements RMIT_Sudoku_Solver {
     // ------------------------------------------------------------------------------------------------
     // Method 1: solve(int[][] puzzle)
     // Data Structure: 2D Integer Array
-    // Time Complexity: O(G * P(log(P))) for Merge Sort and O(G * P^2) for Bubble Sort
+    // Time Complexity: O(G * P(log(P))) for Merge Sort or O(G * P^2) for Bubble Sort
     // Space Complexity: O(P)
     // Main method of the program: Accept 2D Integer Array Sudoku Puzzle -> Solve it
     // -> Return the solution
@@ -72,7 +72,7 @@ public class SimpleGenetic implements RMIT_Sudoku_Solver {
 
     // Support Method 1: Genetic(int[][] board, long startTime)
     // Data Structure: 2D Integer Array
-    // Time Complexity: O(G * P(log(P))) for Merge Sort and O(G * P^2) for Bubble Sort
+    // Time Complexity: O(G * P(log(P))) for Merge Sort or O(G * P^2) for Bubble Sort
     // Space Complexity: O(P)
     // Perform full Simple Genetic algorithm on the Sudoku puzzle, also capture timeout 
     public int[][] Genetic(int[][] puzzle, long startTime, boolean details) {
