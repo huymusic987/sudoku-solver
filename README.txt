@@ -52,5 +52,5 @@ b/ Detail Instruction:
   -- BacktrackingTest, ConstraintSatisfactionTest and SimpleGenetic test runs the test to solve Sudoku boards based on that algorithm only, with details messages showing the algorithms' operation.
   -- SudokuBenchMark test run all the tests with all levels of difficulties to test the behaviour and total run time of all 3 algorithms to perform evaluation and discussion on them.
 - Note: For the Simple Genetic Algorithm, feel free to adjust the 4 parameters POPULATION_SIZE, MUTATION_RATE, MAX_GENERATIONS and sort properties to observe different behavior of this algorithm:
-  -- Adjust it in the constructor's arguments when create a new object, e.g. "RMIT_Sudoku_Solver SimpleGenetic = new SimpleGenetic(POPULATION_SIZE = 100, MUTATION_RATE = 0.2, MAX_GENERATIONS = 10, sort = "Bubble Sort");.
+  -- Adjust it in the constructor's arguments when create a new object, e.g. "RMIT_Sudoku_Solver SimpleGenetic = new SimpleGenetic(POPULATION_SIZE = 100, MUTATION_RATE = 0.2, MAX_GENERATIONS = 10, sort = "Bubble Sort");".
   -- Or adjust it in the SudokuBenchMark file with different test levels, e.g. "switch (difficulty) {case "hard" -> {populationSize *= 20; mutationRate *= 8; maxGeneration *= 2}}".
