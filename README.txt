@@ -33,7 +33,7 @@ Responsibilities:
 - Describe supporting data structures of the algorithm and constructing the List<T> and ArrayList class as based data structure.
 - Perform complexity analysis of Genetic Algorithm, analyse the result and discussion on its run time.
 - Perform evaluation of correctness and efficiency by testing on multiple valid and unsolvable Sudoku boards.
-- Conduct the project video representation and README file for instruction of the project.
+- Conduct and edit the project video presentation and README file for instruction of the project.
 
 3. Instruction to run the project solutions:
 a/ Folders Explanation:
