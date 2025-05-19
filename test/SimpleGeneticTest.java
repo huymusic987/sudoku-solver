@@ -1,7 +1,7 @@
 package test;
 
 import algorithms.SimpleGenetic;
-import algorithms.SudokuSolver;
+import algorithms.RMIT_Sudoku_Solver;
 import structures.List;
 import utils.SudokuIOHandling;
 import utils.SudokuTestUtils;
@@ -25,7 +25,7 @@ public class SimpleGeneticTest {
 
             System.out.println("\nTesting difficulty: " + difficulty);
 
-            SudokuSolver SimpleGenetic = new SimpleGenetic(100, 0.2,
+            RMIT_Sudoku_Solver SimpleGenetic = new SimpleGenetic(100, 0.2,
                     10, "Merge Sort");
 
             SudokuTestUtils.testSolver(SimpleGenetic, puzzles, difficulty, true);

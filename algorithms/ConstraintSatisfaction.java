@@ -3,7 +3,7 @@ package algorithms;
 import structures.ArrayList;
 import structures.List;
 
-public class ConstraintSatisfaction implements SudokuSolver {
+public class ConstraintSatisfaction implements RMIT_Sudoku_Solver {
     private static final int GRID_SIZE = 9;
 
     // Funtion called sudoku solver return solved board or
@@ -23,10 +23,12 @@ public class ConstraintSatisfaction implements SudokuSolver {
         }
     }
 
-    // Average Time Complexity: O(n^k)
+    // Average Time Complexity: O(k^n)
     // n is the number of unassigned cells
     // k is the number of possible values for each cell
     // Worst Case: O(9^81)
+    // Space Complexity: O(d)
+    //  d is the number of empty cell
     public static boolean constraintSatisfaction(int[][] board, long startTime) {
         if (System.currentTimeMillis() - startTime > 120000) {
             throw new RuntimeException("Constraint Satisfaction exceeded time limit of 2 minutes");
@@ -55,7 +57,7 @@ public class ConstraintSatisfaction implements SudokuSolver {
         return false;
     }
 
-    // Average Time Complexity: O(81) = O(1)
+    // Average Time Complexity: O(1)
     // Iterate through the sudoku board to find most
     // constrained cells with fewest possible values
     private static int[] findMostConstrainedCell(int[][] board) {
@@ -77,13 +79,12 @@ public class ConstraintSatisfaction implements SudokuSolver {
         return result;
     }
 
-    // Average Time Complexity: O(27) = O(1)
+    // Average Time Complexity: O(1)
     // Return a list of possible values by checking
     // row, column and 3x3 sub-grid constrain
     private static List<Integer> getPossibleValues(int[][] board, int row, int col) {
         boolean[] used = new boolean[GRID_SIZE + 1];
 
-        // Time Complexity: O(9)
         // Mark numbers used in the row
         for (int i = 0; i < GRID_SIZE; i++) {
             if (board[row][i] != 0) {
@@ -91,7 +92,6 @@ public class ConstraintSatisfaction implements SudokuSolver {
             }
         }
 
-        // Time Complexity: O(9)
         // Mark numbers used in the column
         for (int i = 0; i < GRID_SIZE; i++) {
             if (board[i][col] != 0) {
@@ -99,7 +99,6 @@ public class ConstraintSatisfaction implements SudokuSolver {
             }
         }
 
-        // Time Complexity: O(9)
         // Mark numbers used in the 3x3 subgrid
         int localBoxRow = row - row % 3;
         int localBoxCol = col - col % 3;
@@ -110,7 +109,7 @@ public class ConstraintSatisfaction implements SudokuSolver {
                 }
             }
         }
-        // Average Time Complexity: O(1)
+
         // Collect all unused numbers
         List<Integer> possibleValues = new ArrayList<>();
         for (int num = 1; num <= GRID_SIZE; num++) {

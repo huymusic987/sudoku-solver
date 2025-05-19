@@ -3,7 +3,7 @@ package test;
 import algorithms.Backtracking;
 import algorithms.ConstraintSatisfaction;
 import algorithms.SimpleGenetic;
-import algorithms.SudokuSolver;
+import algorithms.RMIT_Sudoku_Solver;
 import structures.List;
 import utils.SudokuIOHandling;
 import utils.SudokuTestUtils;
@@ -25,7 +25,7 @@ public class SudokuBenchmark {
             System.out.println("\nTesting difficulty: " + difficulty);
 
             // Test Backtracking Solver
-            SudokuSolver backtracking = new Backtracking();
+            RMIT_Sudoku_Solver backtracking = new Backtracking();
             SudokuTestUtils.testSolver(backtracking, puzzles, difficulty, true);
 
             // Configure Genetic Solver parameters (easy)
@@ -53,12 +53,12 @@ public class SudokuBenchmark {
             }
 
             // Test Genetic Solver
-            SudokuSolver genetic = new SimpleGenetic(populationSize, mutationRate, maxGenerations,
+            RMIT_Sudoku_Solver genetic = new SimpleGenetic(populationSize, mutationRate, maxGenerations,
                     "Merge Sort");
             SudokuTestUtils.testSolver(genetic, puzzles, difficulty, true);
 
             // Test Constraint Satisfaction Solver
-            SudokuSolver csp = new ConstraintSatisfaction();
+            RMIT_Sudoku_Solver csp = new ConstraintSatisfaction();
             SudokuTestUtils.testSolver(csp, puzzles, difficulty, true);
         }
     }

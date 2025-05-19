@@ -1,6 +1,6 @@
 package algorithms;
 
-public interface SudokuSolver {
+public interface RMIT_Sudoku_Solver {
     int[][] solve(int[][] puzzle);
 
     boolean isValidBoard(int[][] board);
